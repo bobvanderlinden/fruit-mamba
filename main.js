@@ -228,29 +228,83 @@ define([
     })();
 
     // Draw debug objects
-    (function() {
-      game.chains.draw.insertAfter(function(g, next) {
-        next(g);
-        game.objects.objects.each(function(o) {
-          g.strokeStyle("red");
-          g.strokeCircle(o.position.x, o.position.y, o.touchRadius || 10);
-        });
-      }, game.chains.draw.camera);
-    })();
+    // (function() {
+    //   game.chains.draw.insertAfter(function(g, next) {
+    //     next(g);
+    //     game.objects.objects.each(function(o) {
+    //       g.strokeStyle("red");
+    //       g.strokeCircle(o.position.x, o.position.y, o.touchRadius || 10);
+    //     });
+
+
+    //     for(let y=-10;y<10;y++) {
+    //       for(let x=-10;x<10;x++) {
+    //         g.strokeCircle(x, y, 0.5);
+    //       }
+    //     }
+    //   }, game.chains.draw.camera);
+    // })();
 
     //#gameobjects
 
     // Player
-    function Player({x, y, tile}) {
-      this.position = new Vector(x, y);
-      this.tile = tile
+    class Segment {
+      constructor({child, x, y, tile}) {
+        this.child = child
+        this.position = new Vector(x, y)
+        this.tile = tile
+      }
+
+      setPosition (x,y) {
+        const {x:oldx,y:oldy} = this.position
+        setCell(this.position.x, this.position.y, undefined)
+        this.position.set(x,y)
+        setCell(this.position.x, this.position.y, this)
+
+        if (this.child) {
+          this.child.setPosition(oldx, oldy)
+        }
+      }
     }
-    (function(p) {
-      p.foreground = true;
-    })(Player.prototype);
+    Segment.prototype.foreground = true
+
+    class Player extends Segment {
+      constructor({x, y, tile, child}) {
+        super(...arguments)
+        this.position = new Vector(x, y);
+        this.tile = tile
+        this.child = child
+      }
+    }
+    Player.prototype.foreground = true
 
     player = new Player({x: 0, y: 0, tile: images["snake/strawberry"]});
     g.objects.add(player);
+
+    let child = undefined
+    for (let i=0;i<5;i++) {
+      const segment = new Segment({
+        child,
+        x: 5-i,
+        y: 0,
+        tile: images["snake/banana"]
+      })
+      g.objects.add(segment);
+      child = segment
+    }
+    player.child = child
+
+    let grid = {}
+    function getCell(x,y) {
+      return grid[`${x}x${y}`]
+    }
+    function setCell(x,y,value) {
+      if (!value) {
+        delete grid[`${x}x${y}`]
+      } else {
+        grid[`${x}x${y}`] = value
+      }
+    }
 
     //#states
     function gameplayState() {
@@ -283,7 +337,7 @@ define([
           return;
         }
 
-        player.position.addV(movement);
+        player.setPosition(player.position.x + movement.x, player.position.y + movement.y)
       }
 
       function mousedown() {}
