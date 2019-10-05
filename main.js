@@ -242,23 +242,31 @@ define([
 
     //#gameobjects
 
+    let grid = {};
+    function getCell(x, y) {
+      return grid[`${x}x${y}`];
+    }
+    function setCell(x, y, value) {
+      if (!value) {
+        delete grid[`${x}x${y}`];
+      } else {
+        grid[`${x}x${y}`] = value;
+      }
+    }
+
     // Player
-    class Segment {
-      constructor({ child, x, y, tile }) {
-        this.child = child;
+
+    class Cell {
+      constructor({ x, y, tile }) {
         this.position = new Vector(x, y);
         this.tile = tile;
+        setCell(this.position.x, this.position.y, this);
       }
 
       setPosition(x, y) {
-        const { x: oldx, y: oldy } = this.position;
         setCell(this.position.x, this.position.y, undefined);
         this.position.set(x, y);
         setCell(this.position.x, this.position.y, this);
-
-        if (this.child) {
-          this.child.setPosition(oldx, oldy);
-        }
       }
 
       drawTile(g) {
@@ -269,17 +277,30 @@ define([
         g.restore();
       }
     }
-    Segment.prototype.foreground = true;
+    Cell.prototype.foreground = true;
 
-    class Player extends Segment {
-      constructor({ x, y, tile, child }) {
+    class StaticCell extends Cell {}
+
+    class Segment extends Cell {
+      constructor({ child }) {
         super(...arguments);
-        this.position = new Vector(x, y);
-        this.velocity = new Vector(0, 0);
-        this.tile = tile;
         this.child = child;
       }
 
+      moveTo(x, y) {
+        const { x: oldx, y: oldy } = this.position;
+        this.setPosition(x, y);
+        if (this.child) {
+          this.child.moveTo(oldx, oldy);
+        }
+      }
+    }
+
+    class Player extends Segment {
+      constructor() {
+        super(...arguments);
+        this.velocity = new Vector(0, 0);
+      }
       drawTile(g) {
         g.save();
         g.context.translate(this.position.x, this.position.y);
@@ -318,15 +339,19 @@ define([
     }
     player.child = child;
 
-    let grid = {};
-    function getCell(x, y) {
-      return grid[`${x}x${y}`];
-    }
-    function setCell(x, y, value) {
-      if (!value) {
-        delete grid[`${x}x${y}`];
-      } else {
-        grid[`${x}x${y}`] = value;
+    g.objects.add(
+      new StaticCell({
+        x: 2,
+        y: 3,
+        tile: images["snake/banana"]
+      })
+    );
+
+    function* getSegments(root) {
+      let segment = root;
+      while (segment) {
+        yield segment;
+        segment = segment.child;
       }
     }
 
@@ -361,6 +386,19 @@ define([
           return;
         }
 
+        if (
+          ![...getSegments(player)].some(
+            segment =>
+              getCell(segment.position.x, segment.position.y + 1) instanceof
+              StaticCell
+          )
+        ) {
+          for (segment of getSegments(player)) {
+            segment.setPosition(segment.position.x, segment.position.y + 1);
+          }
+          return;
+        }
+
         const x = player.position.x + movement.x;
         const y = player.position.y + movement.y;
 
@@ -368,7 +406,7 @@ define([
           return;
         }
 
-        player.setPosition(x, y);
+        player.moveTo(x, y);
         player.velocity.setV(movement);
       }
 
