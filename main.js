@@ -157,9 +157,11 @@ define([
         //   pattern = g.context.createPattern(images.background,'repeat');
         // }
         // Follow player
-        var targetx = (game.camera.targetx =
-          player.position.x - (game.width * 0.5) / ptm);
-        var targety = (game.camera.targety = (game.height * 0.5) / ptm);
+        var targetx = player.position.x - (game.width * 0.5) / ptm;
+        var targety = (game.height * 0.5) / ptm;
+
+        game.camera.targetx = targetx;
+        game.camera.targety = targety;
         // Look forward
         // targetx += player.velocity.x * 10;
         // targety += player.velocity.y * 10;
