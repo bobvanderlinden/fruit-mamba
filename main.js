@@ -174,7 +174,7 @@ define([
         // Follow player
         var targetx = player.position.x - (game.width * 0.5) / ptm;
         const minTargety = (game.height * 0.5) / ptm;
-        var targety = Math.max( minTargety - player.position.y, minTargety);
+        var targety = Math.max(minTargety - player.position.y, minTargety);
 
         game.camera.targetx = targetx;
         game.camera.targety = targety;
@@ -348,13 +348,15 @@ define([
         g.drawCenteredImage(this.tile, 0, 0);
         g.restore();
       }
-      isOnGround(){
-        return [...getSegments(this)].some(segment => hasCell(segment.position.x, segment.position.y + 1, StaticCell));
+      isOnGround() {
+        return [...getSegments(this)].some(segment =>
+          hasCell(segment.position.x, segment.position.y + 1, StaticCell)
+        );
       }
-      update(dt){
+      update(dt) {
         this._dt += dt;
 
-        if(this._dt > 0.5) {
+        if (this._dt > 0.5) {
           this._dt = 0;
 
           // Do not allow moving when not touching ground
