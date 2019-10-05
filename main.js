@@ -36,12 +36,14 @@ define([
   var rs = {
     images: [
       "test",
+      "square",
       "snake/head",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
       "snake/blueberry",
-      "snake/banana"
+      "snake/banana",
+      "fruit/grape"
     ],
     audio: ["test"]
   };
@@ -86,6 +88,7 @@ define([
     g.objects.lists.background = g.objects.createIndexList("background");
     g.objects.lists.foreground = g.objects.createIndexList("foreground");
     g.objects.lists.grounded = g.objects.createIndexList("grounded");
+    g.objects.lists.export = g.objects.createIndexList("export");
 
     // Auto-refresh
     // (function() {
@@ -272,7 +275,7 @@ define([
     class Cell {
       constructor({ x, y, tile }) {
         this.position = new Vector(x, y);
-        this.tile = tile;
+        this.tile = tile || this.constructor.tile;
         addToCell(this.position.x, this.position.y, this);
       }
 
@@ -355,7 +358,27 @@ define([
       }
     }
 
-    player = new Player({ x: 0, y: 0, tile: images["snake/head"] });
+    class Box extends StaticCell {
+      static tile = images.square;
+      static export = true;
+      constructor({ x, y }) {
+        super({ x, y });
+      }
+    }
+
+    class Grape extends StaticCell {
+      static tile = images["fruit/grape"];
+      static export = true;
+      constructor({ x, y }) {
+        super({ x, y });
+      }
+    }
+
+    player = new Player({
+      x: 0,
+      y: 0,
+      tile: images["snake/head"]
+    });
     g.objects.add(player);
 
     let child = undefined;
@@ -393,6 +416,117 @@ define([
         segment = segment.child;
       }
     }
+
+    // #editor
+    function startEditor() {
+      let items = [Box, Grape];
+      let item = items[0];
+
+      var leveldef = [];
+
+      function getPosition() {
+        var tmp = new Vector();
+        game.camera.screenToWorld(game.mouse, tmp);
+        tmp.x = Math.round(tmp.x);
+        tmp.y = Math.round(tmp.y);
+        return tmp;
+      }
+      function place() {
+        var p = getPosition();
+        game.objects.add(
+          new item({
+            x: p.x,
+            y: p.y
+          })
+        );
+      }
+      function deleteItem() {
+        var p = getPosition();
+        const obj = getCell(p.x, p.y);
+        game.objects.remove(obj);
+      }
+      function exportConsole() {
+        const items = [];
+        game.objects.lists.export.each(obj => {
+          items.push(obj);
+        });
+        const str = items
+          .map(
+            item =>
+              `new ${item.constructor.name}(${item.position.x}, ${item.position.y}),`
+          )
+          .join("\n");
+        console.log(str);
+      }
+      g.on("mousedown", function(button) {
+        if (button === 0) {
+          place();
+        } else if (button === 2) {
+          deleteItem();
+        }
+      });
+      g.on("mousewheel", function(delta) {
+        var d = delta > 0 ? 1 : -1;
+        item = items[(items.indexOf(item) + d + items.length) % items.length];
+      });
+      g.on("keydown", function(button) {
+        if (button === "p") {
+          exportConsole();
+        }
+      });
+
+      game.chains.draw.push(function(g, next) {
+        next(g);
+
+        const leftTop = new Vector();
+        game.camera.screenToWorld(Vector.zero, leftTop);
+
+        const rightBottom = new Vector();
+        game.camera.screenToWorld(
+          new Vector(game.width, game.height),
+          rightBottom
+        );
+        leftTop.x = Math.floor(leftTop.x);
+        leftTop.y = Math.floor(leftTop.y);
+
+        rightBottom.x = Math.ceil(rightBottom.x);
+        rightBottom.y = Math.ceil(rightBottom.y);
+
+        g.context.globalAlpha = 0.1;
+        g.strokeStyle("black");
+        for (let x = leftTop.x; x < rightBottom.x; x++) {
+          g.strokeLine(x - 0.5, leftTop.y, x - 0.5, rightBottom.y);
+        }
+        for (let y = leftTop.y; y < rightBottom.y; y++) {
+          g.strokeLine(leftTop.x, y - 0.5, rightBottom.x, y - 0.5);
+        }
+        g.context.globalAlpha = 1;
+
+        var p = getPosition();
+
+        g.fillStyle("black");
+        g.fillCircle(p.x, p.y, 0.1);
+
+        if (item) {
+          g.context.globalAlpha = 0.5;
+          item.prototype.drawTile.call(
+            {
+              position: { x: p.x, y: p.y },
+              tile: item.tile
+            },
+            g
+          );
+          g.context.globalAlpha = 1;
+        }
+      });
+    }
+    var editorStarted = false;
+    game.on("keydown", function(button) {
+      if (button === "e" && !editorStarted) {
+        editorStarted = true;
+        startEditor();
+      }
+    });
 
     //#states
     function gameplayState() {
