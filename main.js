@@ -281,12 +281,19 @@ define([
     g.objects.add(player);
 
     let child = undefined;
+    const segmentImages = [
+      images["snake/grape"],
+      images["snake/orange"],
+      images["snake/strawberry"],
+      images["snake/blueberry"],
+      images["snake/banana"]
+    ];
     for (let i = 0; i < 5; i++) {
       const segment = new Segment({
         child,
         x: 5 - i,
         y: 0,
-        tile: images["snake/banana"]
+        tile: segmentImages[i % segmentImages.length]
       });
       g.objects.add(segment);
       child = segment;
@@ -336,10 +343,14 @@ define([
           return;
         }
 
-        player.setPosition(
-          player.position.x + movement.x,
-          player.position.y + movement.y
-        );
+        const x = player.position.x + movement.x;
+        const y = player.position.y + movement.y;
+
+        if (getCell(x, y)) {
+          return;
+        }
+
+        player.setPosition(x, y);
       }
 
       function mousedown() {}
