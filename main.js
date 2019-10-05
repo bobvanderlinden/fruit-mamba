@@ -36,7 +36,7 @@ define([
   ParticleEmitter
 ) {
   var rs = {
-    images: ["test"],
+    images: ["test", "square"],
     audio: ["test"]
   };
   var g, game;
@@ -211,14 +211,17 @@ define([
     //#gameobjects
 
     // Player
-    function Player() {
-      this.position = new Vector(0, 0);
+    function Player(x, y) {
+      this.position = new Vector(x, y);
     }
     (function(p) {
       p.foreground = true;
       p.drawForeground = function(g) {
-        console.log("drawForeground");
-        g.drawCenteredImage(images.test, this.position.x, this.position.y);
+        g.drawCenteredImage(
+          images.square,
+          this.position.x,
+          this.position.y
+        );
       };
     })(Player.prototype);
 
