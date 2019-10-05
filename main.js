@@ -201,21 +201,6 @@ define([
     // Draw foreground
     (function() {
       game.chains.draw.push(function(g, next) {
-        next(g);
-        game.objects.lists.foreground.each(o => {
-          if (o.child) {
-            g.strokeStyle("red");
-            g.strokeLine(
-              o.position.x,
-              o.position.y,
-              o.child.position.x,
-              o.child.position.y
-            );
-          }
-        });
-      });
-
-      game.chains.draw.push(function(g, next) {
         game.objects.lists.foreground.each(o => {
           g.save();
           g.context.translate(o.position.x, o.position.y);
@@ -228,6 +213,20 @@ define([
     })();
 
     // Draw debug objects
+    // game.chains.draw.push(function(g, next) {
+    //   next(g);
+    //   game.objects.lists.foreground.each(o => {
+    //     if (o.child) {
+    //       g.strokeStyle("red");
+    //       g.strokeLine(
+    //         o.position.x,
+    //         o.position.y,
+    //         o.child.position.x,
+    //         o.child.position.y
+    //       );
+    //     }
+    //   });
+    // });
     // (function() {
     //   game.chains.draw.insertAfter(function(g, next) {
     //     next(g);
