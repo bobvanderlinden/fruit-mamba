@@ -43,7 +43,7 @@ define(["intrusivelist", "dintrusivelist"], function(
       o._objectmanager = me;
       me.objects.push(o);
       for (var n in me.lists) {
-        if (o[me.lists[n].property]) {
+        if (o[me.lists[n].property] || o.constructor[me.lists[n].property]) {
           me.lists[n].push(o);
         }
       }
