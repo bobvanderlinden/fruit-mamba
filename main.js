@@ -34,7 +34,14 @@ define([
   ParticleEmitter
 ) {
   var rs = {
-    images: ["test", "snake/grape","snake/orange","snake/strawberry","snake/blueberry","snake/banana"],
+    images: [
+      "test",
+      "snake/grape",
+      "snake/orange",
+      "snake/strawberry",
+      "snake/blueberry",
+      "snake/banana"
+    ],
     audio: ["test"]
   };
   var g, game;

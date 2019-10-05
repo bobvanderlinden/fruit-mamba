@@ -1,16 +1,16 @@
 .embedded {
-	display: none;
+  display: none;
 }
 
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 body {
-	margin: 0;
-	overflow: hidden;
-	font-family: arial, sans-serif;
-	font-size:15px;
-	background: white;
-	background-image: url('/assets/background.jpg')
+  margin: 0;
+  overflow: hidden;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  background: white;
+  background-image: url("/assets/background.jpg");
 }
