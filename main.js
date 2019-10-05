@@ -34,7 +34,7 @@ define([
   ParticleEmitter
 ) {
   var rs = {
-    images: ["test", "square"],
+    images: ["test", "snake/grape","snake/orange","snake/strawberry","snake/blueberry","snake/banana"],
     audio: ["test"]
   };
   var g, game;
@@ -59,12 +59,16 @@ define([
         300
       );
     });
+    window.onresize = g.graphics.resizeCanvas.bind(g.graphics);
   });
 
   function startGame(err) {
     if (err) {
       console.error(err);
     }
+
+    g.graphics.resizeCanvas();
+
     var images = g.resources.images;
     var audio = g.resources.audio;
 
@@ -227,7 +231,7 @@ define([
       p.foreground = true;
     })(Player.prototype);
 
-    player = new Player({x: 0, y: 0, tile: images.square});
+    player = new Player({x: 0, y: 0, tile: images["snake/strawberry"]});
     g.objects.add(player);
 
     //#states
