@@ -254,7 +254,7 @@ define([
       function keydown(key) {
         const movement = new Vector(
           (key === "right" ? 1 : 0) - (key === "left" ? 1 : 0),
-          (key === "down" ? 1 : 0) - (key === "down" ? 1 : 0)
+          (key === "down" ? 1 : 0) - (key === "up" ? 1 : 0)
         );
 
         if (movement.equalsV(Vector.zero)) {
