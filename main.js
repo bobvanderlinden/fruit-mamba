@@ -36,6 +36,7 @@ define([
   var rs = {
     images: [
       "test",
+      "snake/head",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
@@ -202,11 +203,7 @@ define([
     (function() {
       game.chains.draw.push(function(g, next) {
         game.objects.lists.foreground.each(o => {
-          g.save();
-          g.context.translate(o.position.x, o.position.y);
-          g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
-          g.drawCenteredImage(o.tile, 0, 0);
-          g.restore();
+          o.drawTile(g);
         });
         next(g);
       });
@@ -263,6 +260,14 @@ define([
           this.child.setPosition(oldx, oldy);
         }
       }
+
+      drawTile(g) {
+        g.save();
+        g.context.translate(this.position.x, this.position.y);
+        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        g.drawCenteredImage(this.tile, 0, 0);
+        g.restore();
+      }
     }
     Segment.prototype.foreground = true;
 
@@ -270,13 +275,27 @@ define([
       constructor({ x, y, tile, child }) {
         super(...arguments);
         this.position = new Vector(x, y);
+        this.velocity = new Vector(0, 0);
         this.tile = tile;
         this.child = child;
+      }
+
+      drawTile(g) {
+        g.save();
+        g.context.translate(this.position.x, this.position.y);
+        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        g.context.scale(this.velocity.x >= 0 ? 1 : -1, 1);
+        const hpi = Math.PI * 0.5;
+        g.context.rotate(
+          this.velocity.y === 0 ? 0 : this.velocity.y > 0 ? hpi : -hpi
+        );
+        g.drawCenteredImage(this.tile, 0, 0);
+        g.restore();
       }
     }
     Player.prototype.foreground = true;
 
-    player = new Player({ x: 0, y: 0, tile: images["snake/strawberry"] });
+    player = new Player({ x: 0, y: 0, tile: images["snake/head"] });
     g.objects.add(player);
 
     let child = undefined;
@@ -350,6 +369,7 @@ define([
         }
 
         player.setPosition(x, y);
+        player.velocity.setV(movement);
       }
 
       function mousedown() {}
