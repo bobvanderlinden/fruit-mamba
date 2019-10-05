@@ -173,7 +173,8 @@ define([
         // }
         // Follow player
         var targetx = player.position.x - (game.width * 0.5) / ptm;
-        var targety = (game.height * 0.5) / ptm;
+        const minTargety = (game.height * 0.5) / ptm;
+        var targety = Math.max( minTargety - player.position.y, minTargety);
 
         game.camera.targetx = targetx;
         game.camera.targety = targety;
@@ -314,6 +315,11 @@ define([
     }
 
     class Player extends Segment {
+      static updatable = true;
+      static foreground = true;
+
+      _dt = 0;
+
       constructor() {
         super(...arguments);
         this.velocity = new Vector(0, 0);
@@ -330,8 +336,28 @@ define([
         g.drawCenteredImage(this.tile, 0, 0);
         g.restore();
       }
+      isOnGround(){
+        return [...getSegments(this)].some(segment => hasCell(segment.position.x, segment.position.y + 1, StaticCell));
+      }
+      update(dt){
+        this._dt += dt;
+
+        if(this._dt > 0.5) {
+          this._dt = 0;
+
+          // Do not allow moving when not touching ground
+          if (!this.isOnGround()) {
+            for (let segment of getSegments(this)) {
+              segment.setPosition(segment.position.x, segment.position.y + 1);
+            }
+          }
+
+          if ([...getSegments(this)].every(s => s.position.y > 0)) {
+            console.log(`you're dead`);
+          }
+        }
+      }
     }
-    Player.prototype.foreground = true;
 
     class Box extends StaticCell {
       static tile = images.square;
@@ -550,15 +576,8 @@ define([
           return;
         }
 
-        // Do not allow moving when not touching ground
-        if (
-          ![...getSegments(player)].some(segment =>
-            hasCell(segment.position.x, segment.position.y + 1, StaticCell)
-          )
-        ) {
-          for (segment of getSegments(player)) {
-            segment.setPosition(segment.position.x, segment.position.y + 1);
-          }
+        // don't allow moving while in air
+        if (!player.isOnGround()) {
           return;
         }
 
