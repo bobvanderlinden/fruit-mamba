@@ -207,8 +207,8 @@ define([
           g.context.scale(1/game.camera.PTM, 1/game.camera.PTM);
           g.drawCenteredImage(
             o.tile,
-            -1,
-            -1
+            0,
+            0
           );
           g.restore();
         });
