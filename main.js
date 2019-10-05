@@ -246,11 +246,23 @@ define([
     function getCell(x, y) {
       return grid[`${x}x${y}`];
     }
-    function setCell(x, y, value) {
-      if (!value) {
+    function hasCell(x, y, type) {
+      const cell = getCell(x, y);
+      if (!cell) {
+        return;
+      }
+      return [...cell].some(c => c instanceof type);
+    }
+    function addToCell(x, y, value) {
+      if (!grid[`${x}x${y}`]) {
+        grid[`${x}x${y}`] = new Set();
+      }
+      grid[`${x}x${y}`].add(value);
+    }
+    function removeFromCell(x, y, value) {
+      grid[`${x}x${y}`].delete(value);
+      if (grid[`${x}x${y}`].size === 0) {
         delete grid[`${x}x${y}`];
-      } else {
-        grid[`${x}x${y}`] = value;
       }
     }
 
@@ -260,13 +272,13 @@ define([
       constructor({ x, y, tile }) {
         this.position = new Vector(x, y);
         this.tile = tile;
-        setCell(this.position.x, this.position.y, this);
+        addToCell(this.position.x, this.position.y, this);
       }
 
       setPosition(x, y) {
-        setCell(this.position.x, this.position.y, undefined);
+        removeFromCell(this.position.x, this.position.y, this);
         this.position.set(x, y);
-        setCell(this.position.x, this.position.y, this);
+        addToCell(this.position.x, this.position.y, this);
       }
 
       drawTile(g) {
@@ -386,22 +398,10 @@ define([
           return;
         }
 
-        // Do not allow moving into body
-        if (
-          getCell(
-            player.position.x + movement.x,
-            player.position.y + movement.y
-          ) instanceof Segment
-        ) {
-          return;
-        }
-
         // Do not allow moving when not touching ground
         if (
-          ![...getSegments(player)].some(
-            segment =>
-              getCell(segment.position.x, segment.position.y + 1) instanceof
-              StaticCell
+          ![...getSegments(player)].some(segment =>
+            hasCell(segment.position.x, segment.position.y + 1, StaticCell)
           )
         ) {
           for (segment of getSegments(player)) {
@@ -413,7 +413,8 @@ define([
         const x = player.position.x + movement.x;
         const y = player.position.y + movement.y;
 
-        if (getCell(x, y)) {
+        // Do not allow moving into body
+        if (hasCell(x, y, Segment)) {
           return;
         }
 
