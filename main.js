@@ -43,7 +43,9 @@ define([
       "snake/strawberry",
       "snake/blueberry",
       "snake/banana",
-      "fruit/grape"
+      "fruit/grape",
+      "fruit/golden_apple",
+      "tree"
     ],
     audio: ["test"]
   };
@@ -347,6 +349,22 @@ define([
       }
     }
 
+    class GoldenAppel extends StaticCell {
+      static tile = images["fruit/golden_apple"];
+      static export = true;
+      constructor({ x, y }) {
+        super({ x, y });
+      }
+    }
+
+    class Tree extends Cell {
+      static tile = images["tree"];
+      static export = true;
+      constructor({ x, y }) {
+        super({ x, y });
+      }
+    }
+
     player = new Player({
       x: 0,
       y: 0,
@@ -392,7 +410,7 @@ define([
 
     // #editor
     function startEditor() {
-      let items = [Box, Grape];
+      let items = [Box, Grape, GoldenAppel, Tree];
       let item = items[0];
 
       var leveldef = [];
