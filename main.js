@@ -204,12 +204,8 @@ define([
         game.objects.lists.foreground.each(o => {
           g.save();
           g.context.translate(o.position.x, o.position.y);
-          g.context.scale(1/game.camera.PTM, 1/game.camera.PTM);
-          g.drawCenteredImage(
-            o.tile,
-            -1,
-            -1
-          );
+          g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+          g.drawCenteredImage(o.tile, -1, -1);
           g.restore();
         });
         next(g);
@@ -230,15 +226,15 @@ define([
     //#gameobjects
 
     // Player
-    function Player({x, y, tile}) {
+    function Player({ x, y, tile }) {
       this.position = new Vector(x, y);
-      this.tile = tile
+      this.tile = tile;
     }
     (function(p) {
       p.foreground = true;
     })(Player.prototype);
 
-    player = new Player({x: 0, y: 0, tile: images["snake/strawberry"]});
+    player = new Player({ x: 0, y: 0, tile: images["snake/strawberry"] });
     g.objects.add(player);
 
     //#states
