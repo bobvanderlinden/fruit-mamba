@@ -334,6 +334,9 @@ define([
         g.drawCenteredImage(this.tile, 0, 0);
         g.restore();
       }
+      isOnGround(){
+        return [...getSegments(this)].some(segment => hasCell(segment.position.x, segment.position.y + 1, StaticCell));
+      }
       update(dt){
         this._dt += dt;
 
@@ -341,11 +344,7 @@ define([
           this._dt = 0;
 
           // Do not allow moving when not touching ground
-          if (
-              ![...getSegments(this)].some(segment =>
-                  hasCell(segment.position.x, segment.position.y + 1, StaticCell)
-              )
-          ) {
+          if (!this.isOnGround()) {
             for (let segment of getSegments(this)) {
               segment.setPosition(segment.position.x, segment.position.y + 1);
             }
@@ -556,6 +555,11 @@ define([
         );
 
         if (movement.equalsV(Vector.zero)) {
+          return;
+        }
+
+        // don't allow moving while in air
+        if (!player.isOnGround()) {
           return;
         }
 
