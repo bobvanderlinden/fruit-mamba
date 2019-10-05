@@ -465,7 +465,7 @@ define([
       function deleteItem() {
         var p = getPosition();
         const obj = getCell(p.x, p.y);
-        game.objects.remove(obj);
+        obj.forEach(o => o.destroy());
       }
       function exportConsole() {
         const items = [];
