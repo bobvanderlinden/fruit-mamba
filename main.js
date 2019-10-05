@@ -59,12 +59,16 @@ define([
         300
       );
     });
+    window.onresize = g.graphics.resizeCanvas.bind(g.graphics);
   });
 
   function startGame(err) {
     if (err) {
       console.error(err);
     }
+
+    g.graphics.resizeCanvas();
+
     var images = g.resources.images;
     var audio = g.resources.audio;
 
