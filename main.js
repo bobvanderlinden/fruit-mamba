@@ -5,7 +5,6 @@ define([
   "staticcollidable",
   "linesegment",
   "editor",
-  "required",
   "state",
   "level",
   "mouse",
@@ -23,7 +22,6 @@ define([
   StaticCollidable,
   LineSegment,
   editor,
-  required,
   state,
   level,
   mouse,
@@ -43,7 +41,6 @@ define([
   platform.once("load", function() {
     var canvas = document.getElementById("main");
     game = g = new Game(startGame, canvas, [
-      required(["chrome"]),
       mouse,
       keyboard,
       resources(rs),
