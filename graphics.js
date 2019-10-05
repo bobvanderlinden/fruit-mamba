@@ -3,6 +3,10 @@ define(function() {
 		this.context = context;
 	}
 	var p = Graphics.prototype;
+	p.resizeCanvas = function() {
+		this.context.canvas.width = window.innerWidth;
+		this.context.canvas.height = window.innerHeight;
+	};
 	p.clear = function() {
 		this.save();
 		this.context.setTransform(1, 0, 0, 1, 0, 0);
