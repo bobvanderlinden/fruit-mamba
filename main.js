@@ -413,8 +413,8 @@ define([
         const x = player.position.x + movement.x;
         const y = player.position.y + movement.y;
 
-        // Do not allow moving into body
-        if (hasCell(x, y, Segment)) {
+        // Do not allow moving into body and also do not allow moving into ground
+        if (hasCell(x, y, Segment) || hasCell(x, y, StaticCell)) {
           return;
         }
 
