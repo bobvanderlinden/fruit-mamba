@@ -106,8 +106,9 @@ define([
     // Camera
     (function() {
       game.camera = new Vector(0, 0);
-      game.camera.zoom = 1;
-      game.camera.PTM = 0.1;
+      // 9 tiles vertically
+      game.camera.zoom = 256 * 4;
+      game.camera.PTM = 256;
       game.camera.x = -(game.width * 0.5) / getPixelsPerMeter();
       game.camera.y = (game.height * 0.5) / getPixelsPerMeter();
       game.camera.smoothx = game.camera.x;
