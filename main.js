@@ -291,6 +291,11 @@ define([
         g.drawCenteredImage(this.tile, 0, 0);
         g.restore();
       }
+
+      destroy() {
+        removeFromCell(this.position.x, this.position.y, this);
+        game.objects.remove(this);
+      }
     }
     Cell.prototype.foreground = true;
 
