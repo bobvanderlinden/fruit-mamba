@@ -278,7 +278,7 @@ define([
     }
     Player.prototype.foreground = true
 
-    player = new Player({x: 0, y: 0, tile: images["snake/strawberry"]});
+    player = new Player({ x: 0, y: 0, tile: images["snake/strawberry"] });
     g.objects.add(player);
 
     let child = undefined
