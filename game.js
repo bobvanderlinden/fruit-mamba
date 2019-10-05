@@ -40,8 +40,6 @@ define(['eventemitter','objectmanager','graphics'], function(eventemitter,Object
 			next(dt);
 		});
 
-		this.width = canvas.width;
-		this.height = canvas.height;
 		this.canvas = canvas;
 		this.graphics = new Graphics(canvas.getContext('2d'));
 		this.time = 0;
@@ -63,6 +61,13 @@ define(['eventemitter','objectmanager','graphics'], function(eventemitter,Object
 	}
 	var p = Game.prototype;
 	eventemitter._inherit(p);
+
+	Object.defineProperty(p, 'width', {
+		get: function() { return this.canvas.width; }
+	});
+	Object.defineProperty(p, 'height', {
+		get: function() { return this.canvas.height; }
+	});
 
 	p.start = function() {
 		if (this.isRunning) { throw 'Already started'; }
