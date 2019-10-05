@@ -252,6 +252,13 @@ define([
     function getCell(x, y) {
       return grid[`${x}x${y}`];
     }
+    function getCellOf(x, y, type) {
+      const cell = getCell(x, y);
+      if (!cell) {
+        return;
+      }
+      return [...cell].filter(c => c instanceof type)[0];
+    }
     function hasCell(x, y, type) {
       const cell = getCell(x, y);
       if (!cell) {
@@ -362,6 +369,9 @@ define([
           }
         }
       }
+      eat(fruit) {
+        fruit.eatenBy(this);
+      }
     }
 
     class Box extends StaticCell {
@@ -372,11 +382,19 @@ define([
       }
     }
 
-    class Grape extends StaticCell {
-      static tile = images["fruit/grape"];
+    class Fruit extends Cell {
       static export = true;
-      constructor({ x, y }) {
-        super({ x, y });
+      eatenBy(player) {
+        const segment = new Segment({
+          x: player.position.x,
+          y: player.position.y,
+          tile: this.segmentTile || this.constructor.segmentTile,
+          child: player.child
+        });
+        game.objects.add(segment);
+        player.child = segment;
+        player.setPosition(this.position.x, this.position.y);
+        this.destroy();
       }
     }
 
@@ -591,6 +609,13 @@ define([
 
         // Do not allow moving into body and also do not allow moving into ground
         if (hasCell(x, y, Segment) || hasCell(x, y, StaticCell)) {
+          return;
+        }
+
+        const fruit = getCellOf(x, y, Fruit);
+        if (fruit) {
+          player.eat(fruit);
+          player.velocity.setV(movement);
           return;
         }
 
