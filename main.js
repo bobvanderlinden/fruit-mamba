@@ -34,7 +34,7 @@ define([
   ParticleEmitter
 ) {
   var rs = {
-    images: ["test", "square"],
+    images: ["test", "snake/grape","snake/orange","snake/strawberry","snake/blueberry","snake/banana"],
     audio: ["test"]
   };
   var g, game;
@@ -222,7 +222,7 @@ define([
       p.foreground = true;
       p.drawForeground = function(g) {
         g.drawCenteredImage(
-          images.square,
+          images["snake/strawberry"],
           this.position.x,
           this.position.y
         );
