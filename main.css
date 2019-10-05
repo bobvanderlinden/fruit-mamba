@@ -8,6 +8,7 @@ body {
 	font-family:arial;
 	font-size:15px;
 	background: white;
+	background-image: url('/assets/background.jpg')
 }
 #main, #background, #trail, .overlay {
 	width: 800px;
