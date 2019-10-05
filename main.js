@@ -386,6 +386,17 @@ define([
           return;
         }
 
+        // Do not allow moving into body
+        if (
+          getCell(
+            player.position.x + movement.x,
+            player.position.y + movement.y
+          ) instanceof Segment
+        ) {
+          return;
+        }
+
+        // Do not allow moving when not touching ground
         if (
           ![...getSegments(player)].some(
             segment =>
