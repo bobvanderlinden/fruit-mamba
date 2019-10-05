@@ -104,7 +104,7 @@ define([
     (function() {
       game.camera = new Vector(0, 0);
       // 9 tiles vertically
-      game.camera.zoom = 256 * 4;
+      game.camera.zoom = 4;
       game.camera.PTM = 256;
       game.camera.x = -(game.width * 0.5) / getPixelsPerMeter();
       game.camera.y = (game.height * 0.5) / getPixelsPerMeter();
@@ -169,8 +169,8 @@ define([
         var smoothy = (game.camera.smoothy =
           0.95 * game.camera.smoothy + 0.05 * targety);
 
-        game.camera.x = Math.floor(smoothx);
-        game.camera.y = Math.floor(smoothy);
+        game.camera.x = smoothx;
+        game.camera.y = smoothy;
         // No smoothing
         // game.camera.x = targetx;
         // game.camera.y = targety;
@@ -191,7 +191,15 @@ define([
     (function() {
       game.chains.draw.push(function(g, next) {
         game.objects.lists.foreground.each(o => {
-          o.drawForeground(g);
+          g.save();
+          g.context.translate(o.position.x, o.position.y);
+          g.context.scale(1/game.camera.PTM, 1/game.camera.PTM);
+          g.drawCenteredImage(
+            o.tile,
+            -1,
+            -1
+          );
+          g.restore();
         });
         next(g);
       });
@@ -211,21 +219,15 @@ define([
     //#gameobjects
 
     // Player
-    function Player(x, y) {
+    function Player({x, y, tile}) {
       this.position = new Vector(x, y);
+      this.tile = tile
     }
     (function(p) {
       p.foreground = true;
-      p.drawForeground = function(g) {
-        g.drawCenteredImage(
-          images.square,
-          this.position.x,
-          this.position.y
-        );
-      };
     })(Player.prototype);
 
-    player = new Player(0, 0);
+    player = new Player({x: 0, y: 0, tile: images.square});
     g.objects.add(player);
 
     //#states
