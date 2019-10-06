@@ -342,12 +342,12 @@ define([
     class StaticCell extends Cell {}
 
     class Block extends StaticCell {
-      addToGrid () {
+      addToGrid() {
         addToCell(this.position.x + 1, this.position.y, this);
         addToCell(this.position.x, this.position.y, this);
         addToCell(this.position.x + -1, this.position.y, this);
       }
-      removeFromGrid () {
+      removeFromGrid() {
         removesFromCell(this.position.x + 1, this.position.y, this);
         removesFromCell(this.position.x, this.position.y, this);
         removesFromCell(this.position.x + -1, this.position.y, this);
@@ -355,16 +355,15 @@ define([
     }
 
     class PinkBlock extends Block {
-      static tile = images["blocks/pink"]
+      static tile = images["blocks/pink"];
     }
 
     class YelllowBlock extends Block {
-      static tile = images["blocks/yellow"]
-
+      static tile = images["blocks/yellow"];
     }
 
     class GreenBlock extends Block {
-      static tile = images["blocks/green"]
+      static tile = images["blocks/green"];
     }
 
     class Segment extends Cell {
@@ -523,7 +522,15 @@ define([
 
     // #editor
     function startEditor() {
-      let items = [Box, Grape, GoldenAppel, Tree, GreenBlock, YelllowBlock, PinkBlock];
+      let items = [
+        Box,
+        Grape,
+        GoldenAppel,
+        Tree,
+        GreenBlock,
+        YelllowBlock,
+        PinkBlock
+      ];
       let item = items[0];
 
       var leveldef = [];
@@ -741,7 +748,7 @@ define([
           }),
           new GreenBlock({
             x: 2,
-            y: 0,
+            y: 0
           })
         ],
         clone: arguments.callee,
