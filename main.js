@@ -39,6 +39,7 @@ define([
       "square",
       "snake/head",
       "snake/rope",
+      "snake/tail",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
@@ -246,6 +247,34 @@ define([
       });
     })();
 
+    function drawTail(g, segment) {
+      g.save();
+
+      const diff = new Vector(0, 0);
+
+      if(segment.oldPosition) {
+        diff.addV(segment.oldPosition);
+        diff.substract(segment.position.x, segment.position.y);
+      } else {
+        // no old position, assume we face the right
+        diff.add(-1, 0);
+      }
+
+      const x = diff.x / 2;
+      const y = diff.y / 2;
+
+      g.context.translate(
+        segment.position.x + x,
+        segment.position.y + y
+      );
+
+      g.context.rotate(y ? Math.PI * y : x > 0 ? Math.PI * 2 : Math.PI);
+      g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+      g.drawCenteredImage(images["snake/tail"], 0, 0);
+
+      g.restore();
+    }
+
     function drawRope(g, segment) {
       if (segment.child) {
         g.save();
@@ -268,7 +297,12 @@ define([
 
         if (segment.child.child) {
           drawRope(g, segment.child);
+        } else {
+          drawTail(g, segment.child);
         }
+      } else {
+        // we just have the head, draw tail directly
+        drawTail(g, segment);
       }
     }
 
@@ -353,6 +387,10 @@ define([
       }
 
       setPosition(x, y) {
+        if(this.position){
+          this.oldPosition = new Vector(this.position.x, this.position.y);
+        }
+
         this.removeFromGrid();
         this.position.set(x, y);
         this.addToGrid();
