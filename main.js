@@ -310,6 +310,8 @@ define([
     // Player
 
     class Cell {
+      static foreground = true;
+      static cell = true;
       constructor({ x, y, tile }) {
         this.position = new Vector(x, y);
         this.tile = tile || this.constructor.tile;
@@ -341,8 +343,6 @@ define([
         game.objects.remove(this);
       }
     }
-    Cell.prototype.foreground = true;
-    Cell.prototype.cell = true;
 
     class StaticCell extends Cell {}
 
