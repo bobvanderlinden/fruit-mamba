@@ -1009,8 +1009,6 @@ define([
         enable: enable,
         disable: disable
       };
-      var time = 0;
-      let body = document.body;
       function enable() {
         pickRandom(diedSounds).play();
         g.chains.update.insertBefore(update, g.chains.update.objects);
@@ -1198,11 +1196,11 @@ define([
           new YellowBlock({ x: 9, y: 0 }),
           new Blueberry({ x: 15, y: -17 }),
           new Strawberry({ x: 15, y: -14 }),
-          new GreenBlock({ x: 18, y: -5}),
-          new YellowBlock({ x: 20, y: -6}),
-          new PinkBlock({ x: 22, y: -7}),
-          new PinkBlock({ x: 18, y: -8}),
-          new YellowBlock({ x: 16, y: -10}),
+          new GreenBlock({ x: 18, y: -5 }),
+          new YellowBlock({ x: 20, y: -6 }),
+          new PinkBlock({ x: 22, y: -7 }),
+          new PinkBlock({ x: 18, y: -8 }),
+          new YellowBlock({ x: 16, y: -10 })
         ],
         clone: arguments.callee,
         nextLevel: level_last
