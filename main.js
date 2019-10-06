@@ -38,6 +38,7 @@ define([
       "test",
       "square",
       "snake/head",
+      "snake/rope",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
@@ -239,6 +240,24 @@ define([
       );
     })();
 
+    function drawRope(g, segment) {
+      if(segment.child) {
+        g.save();
+
+        // draw rope
+        const diff = new Vector(segment.position.x, segment.position.y).substract(segment.child.position.x, segment.child.position.y);
+        g.context.translate(segment.position.x - diff.x/2, segment.position.y - diff.y/2);
+        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        g.drawCenteredImage(images["snake/rope"], 0, 0);
+
+        g.restore();
+
+        if(segment.child.child) {
+          drawRope(g, segment.child);
+        }
+      }
+    }
+
     // Draw objects
     (function() {
       game.chains.draw.push(function(g, next) {
@@ -248,6 +267,7 @@ define([
         game.objects.lists.foreground.each(o => {
           o.drawForeground(g);
         });
+        drawRope(g, player);
         next(g);
       });
     })();
