@@ -187,7 +187,10 @@ define([
         // Follow player
         var targetx = player.position.x - (game.width * 0.5) / ptm;
         // center on screen except if we're at the bottom of the level, show just one empty row below the level
-        var targety = Math.max((game.height * 0.5) / ptm - player.position.y, (game.height - 1.5 * ptm) / ptm);
+        var targety = Math.max(
+          (game.height * 0.5) / ptm - player.position.y,
+          (game.height - 1.5 * ptm) / ptm
+        );
 
         game.camera.targetx = targetx;
         game.camera.targety = targety;
