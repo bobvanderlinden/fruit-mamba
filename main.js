@@ -918,7 +918,7 @@ define([
           })
         ],
         clone: arguments.callee,
-        nextLevel: level_last
+        nextLevel: level_sym2
       };
     }
 
@@ -949,7 +949,7 @@ define([
           new GreenBlock({ x: 2, y: 0 })
         ],
         clone: arguments.callee,
-        nextLevel: level_last
+        nextLevel: level_sym3
       };
     }
 
