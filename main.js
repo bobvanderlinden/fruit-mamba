@@ -57,7 +57,7 @@ define([
       "blocks/pink",
       "instructions/go_to_apple",
       "instructions/press_right",
-      "instructions/press_up",
+      "instructions/press_up"
     ],
     audio: ["test"]
   };
@@ -379,13 +379,13 @@ define([
     }
 
     class AppleInstruction extends Cell {
-      static tile = images["instructions/go_to_apple"]
+      static tile = images["instructions/go_to_apple"];
     }
     class UpInstruction extends Cell {
-      static tile = images["instructions/press_up"]
+      static tile = images["instructions/press_up"];
     }
     class RightInstruction extends Cell {
-      static tile = images["instructions/press_right"]
+      static tile = images["instructions/press_right"];
     }
 
     class Segment extends Cell {
@@ -694,7 +694,6 @@ define([
       };
       function enable() {
         game.camera.reset();
-        game.camera.smoothx += 300;
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
       }
@@ -764,14 +763,18 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.fillStyle("rgba(251,228,12,0.5)")
-        g.fillRectangle(0, 0, game.width, game.height)
-        g.drawCenteredImage(images["game_state/victory"], game.width/2, game.height/2);
+        g.fillStyle("rgba(251,228,12,0.5)");
+        g.fillRectangle(0, 0, game.width, game.height);
+        g.drawCenteredImage(
+          images["game_state/victory"],
+          game.width / 2,
+          game.height / 2
+        );
       }
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(level_sym1());
+          g.changeLevel(game.level.nextLevel());
           g.changeState(gameplayState());
         }
       }
@@ -802,14 +805,18 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.fillStyle("rgba(0,0,0,0.5)")
-        g.fillRectangle(0, 0, game.width, game.height)
-        g.drawCenteredImage(images["game_state/dead"], game.width/2, game.height/2);
+        g.fillStyle("rgba(0,0,0,0.5)");
+        g.fillRectangle(0, 0, game.width, game.height);
+        g.drawCenteredImage(
+          images["game_state/dead"],
+          game.width / 2,
+          game.height / 2
+        );
       }
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(level_sym1());
+          g.changeLevel(game.level.clone());
           g.changeState(gameplayState());
         }
       }
@@ -841,7 +848,7 @@ define([
             y: 0
           }),
           new RightInstruction({
-            x: -2, 
+            x: -2,
             y: -1
           }),
           new YellowBlock({
@@ -865,7 +872,7 @@ define([
             y: -1
           }),
           new UpInstruction({
-            x: 13, 
+            x: 13,
             y: -1
           }),
           new Blueberry({
@@ -879,14 +886,22 @@ define([
           new GoldenApple({
             x: 5,
             y: -7
-          }), 
+          }),
           new AppleInstruction({
-            x: 13, 
+            x: 13,
             y: -7
           })
         ],
         clone: arguments.callee,
-        nextLevel: null
+        nextLevel: level_last
+      };
+    }
+
+    function level_last() {
+      return {
+        name: "last",
+        objects: [new Start({ x: 0, y: -1 }), new GreenBlock({ x: 0, y: 0 })],
+        clone: arguments.callee
       };
     }
 
