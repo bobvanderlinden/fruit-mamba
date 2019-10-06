@@ -466,6 +466,11 @@ define([
       }
     }
 
+    class Grape extends Fruit {
+      static tile = images["fruit/grape"];
+      static segmentTile = images["snake/grape"];
+    }
+
     class GoldenAppel extends StaticCell {
       static tile = images["fruit/golden_apple"];
       static export = true;
