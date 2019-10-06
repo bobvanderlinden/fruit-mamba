@@ -61,7 +61,11 @@ define([
       "instructions/go_to_apple",
       "instructions/press_right",
       "instructions/press_up",
-      "background"
+      "background",
+      "background/cloud1",
+      "background/cloud2",
+      "background/cloud3",
+      "background/cloud4"
     ],
     audio: ["test"]
   };
@@ -253,7 +257,7 @@ define([
 
       const diff = new Vector(0, 0);
 
-      if(segment.oldPosition) {
+      if (segment.oldPosition) {
         diff.addV(segment.oldPosition);
         diff.substract(segment.position.x, segment.position.y);
       } else {
@@ -264,10 +268,7 @@ define([
       const x = diff.x / 2;
       const y = diff.y / 2;
 
-      g.context.translate(
-        segment.position.x + x,
-        segment.position.y + y
-      );
+      g.context.translate(segment.position.x + x, segment.position.y + y);
 
       g.context.rotate(y ? Math.PI * y : x > 0 ? Math.PI * 2 : Math.PI);
       g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
@@ -388,7 +389,7 @@ define([
       }
 
       setPosition(x, y) {
-        if(this.position){
+        if (this.position) {
           this.oldPosition = new Vector(this.position.x, this.position.y);
         }
 
@@ -634,6 +635,24 @@ define([
       }
     }
 
+    class Cloud1 extends Cell {
+      static export = true;
+      static tile = images["background/cloud1"];
+    }
+    class Cloud2 extends Cell {
+      static export = true;
+      static tile = images["background/cloud2"];
+    }
+
+    class Cloud3 extends Cell {
+      static export = true;
+      static tile = images["background/cloud3"];
+    }
+    class Cloud4 extends Cell {
+      static export = true;
+      static tile = images["background/cloud4"];
+    }
+
     function* getSegments(root) {
       let segment = root;
       while (segment) {
@@ -655,7 +674,11 @@ define([
         Tree,
         GreenBlock,
         YellowBlock,
-        PinkBlock
+        PinkBlock,
+        Cloud1,
+        Cloud2,
+        Cloud3,
+        Cloud4
       ];
       let item = items[0];
 
