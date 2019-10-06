@@ -47,6 +47,7 @@ define([
       "fruit/golden_apple",
       "tree",
       "game_state/dead",
+      "game_state/victory",
       "blocks/green",
       "blocks/yellow",
       "blocks/pink"
@@ -497,11 +498,11 @@ define([
       static segmentTile = images["snake/grape"];
     }
 
-    class GoldenAppel extends StaticCell {
+    class GoldenAppel extends Fruit {
       static tile = images["fruit/golden_apple"];
-      static export = true;
-      constructor({ x, y }) {
-        super({ x, y });
+      eatenBy(player) {
+        this.destroy();
+        g.changeState(winState())
       }
     }
 
@@ -692,6 +693,42 @@ define([
         next(g);
       }
 
+      return me;
+    }
+
+    function winState() {
+      const me = {
+        enabled: false,
+        enable: enable,
+        disable: disable
+      };
+      var time = 0;
+      let body = document.body;
+      function enable() {
+        g.chains.update.insertBefore(update, g.chains.update.objects);
+        g.chains.draw.unshift(draw);
+        g.on("keydown", keydown);
+      }
+      function draw(g, next) {
+        // Draw HUD
+        next(g);
+        g.drawImage(images["game_state/victory"], 0, 0, 1024, 512);
+      }
+      function keydown(key) {
+        if (key === "enter") {
+          g.objects.handlePending();
+          g.changeLevel(level_sym1());
+          g.changeState(gameplayState());
+        }
+      }
+      function update(dt, next) {
+        // next(dt)
+      }
+      function disable() {
+        g.chains.update.remove(update);
+        g.chains.draw.remove(draw);
+        g.removeListener("keydown", keydown);
+      }
       return me;
     }
 
