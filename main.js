@@ -983,7 +983,7 @@ define([
         _g.fillStyle("rgba(251,228,12,0.2)");
         _g.fillRectangle(0, 0, game.width, game.height);
 
-        if(g.hasNextLevel()) {
+        if (g.hasNextLevel()) {
           drawOverlayImage(_g, images["game_state/next_level"]);
         } else {
           drawOverlayImage(_g, images["game_state/victory"]);
@@ -992,7 +992,7 @@ define([
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          if(g.hasNextLevel()) {
+          if (g.hasNextLevel()) {
             g.nextLevel();
             g.changeState(gameplayState());
           } else {
@@ -1000,7 +1000,6 @@ define([
             g.changeLevel(level_sym1());
             g.changeState(titleState());
           }
-
         }
       }
       function update(dt, next) {
@@ -1213,15 +1212,6 @@ define([
           new PinkBlock({ x: 18, y: -8 }),
           new YellowBlock({ x: 16, y: -10 })
         ],
-        clone: arguments.callee,
-        nextLevel: level_last
-      };
-    }
-
-    function level_last() {
-      return {
-        name: "last",
-        objects: [new Start({ x: 0, y: -1 }), new GreenBlock({ x: 0, y: 0 })],
         clone: arguments.callee
       };
     }
