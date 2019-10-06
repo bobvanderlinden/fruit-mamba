@@ -900,6 +900,37 @@ define([
       };
     }
 
+    function level_sym2() {
+      return {
+        name: "Level 2",
+        objects: [
+          new Start({ x: 2, y: -1 }),
+          new Tree({ x: -19, y: -6 }),
+          new GoldenApple({ x: -18, y: -7 }),
+          new PinkBlock({ x: -7, y: -9 }),
+          new Banana({ x: -2, y: -8 }),
+          new Banana({ x: -2, y: -7 }),
+          new Banana({ x: -2, y: -5 }),
+          new Banana({ x: -2, y: -4 }),
+          new YellowBlock({ x: 10, y: -5 }),
+          new Grape({ x: 11, y: -8 }),
+          new Grape({ x: 11, y: -7 }),
+          new Grape({ x: 11, y: -6 }),
+          new Orange({ x: 9, y: -6 }),
+          new Orange({ x: 7, y: -6 }),
+          new Strawberry({ x: 6, y: -4 }),
+          new Strawberry({ x: 6, y: -2 }),
+          new Blueberry({ x: 3, y: -2 }),
+          new Banana({ x: 3, y: -1 }),
+          new YellowBlock({ x: -1, y: -3 }),
+          new PinkBlock({ x: 6, y: -1 }),
+          new GreenBlock({ x: 2, y: 0 })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_last
+      };
+    }
+
     function level_last() {
       return {
         name: "last",
