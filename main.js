@@ -632,12 +632,13 @@ define([
         game.objects.lists.export.each(obj => {
           items.push(obj);
         });
-        const str = items
+        let str = items
           .map(
             item =>
-              `new ${item.constructor.name}(${item.position.x}, ${item.position.y}),`
+              `new ${item.constructor.name}({ x: ${item.position.x}, y: ${item.position.y}}),`
           )
           .join("\n");
+        str += "new Start({ x: 2, y: -1 })";
         console.log(str);
       }
       g.on("mousedown", function(button) {
@@ -914,6 +915,65 @@ define([
             x: 13,
             y: -7
           })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_last
+      };
+    }
+
+    function level_sym2() {
+      return {
+        name: "Level 2",
+        objects: [
+          new Start({ x: 2, y: -1 }),
+          new Tree({ x: -19, y: -6 }),
+          new GoldenApple({ x: -18, y: -7 }),
+          new PinkBlock({ x: -7, y: -9 }),
+          new Banana({ x: -2, y: -8 }),
+          new Banana({ x: -2, y: -7 }),
+          new Banana({ x: -2, y: -5 }),
+          new Banana({ x: -2, y: -4 }),
+          new YellowBlock({ x: 10, y: -5 }),
+          new Grape({ x: 11, y: -8 }),
+          new Grape({ x: 11, y: -7 }),
+          new Grape({ x: 11, y: -6 }),
+          new Orange({ x: 9, y: -6 }),
+          new Orange({ x: 7, y: -6 }),
+          new Strawberry({ x: 6, y: -4 }),
+          new Strawberry({ x: 6, y: -2 }),
+          new Blueberry({ x: 3, y: -2 }),
+          new Banana({ x: 3, y: -1 }),
+          new YellowBlock({ x: -1, y: -3 }),
+          new PinkBlock({ x: 6, y: -1 }),
+          new GreenBlock({ x: 2, y: 0 })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_last
+      };
+    }
+
+    function level_sym3() {
+      return {
+        name: "Level 3",
+        objects: [
+          new Start({ x: 2, y: -1 }),
+          new Banana({ x: 5, y: -1 }),
+          new Orange({ x: 7, y: -7 }),
+          new Grape({ x: 13, y: -2 }),
+          new GoldenApple({ x: 17, y: -17 }),
+          new Tree({ x: 18, y: -16 }),
+          new PinkBlock({ x: 14, y: -12 }),
+          new YellowBlock({ x: 8, y: -12 }),
+          new YellowBlock({ x: 5, y: -9 }),
+          new GreenBlock({ x: 8, y: -6 }),
+          new GreenBlock({ x: 12, y: -5 }),
+          new PinkBlock({ x: 15, y: -3 }),
+          new PinkBlock({ x: 12, y: -1 }),
+          new GreenBlock({ x: 2, y: 0 }),
+          new YellowBlock({ x: 5, y: 0 }),
+          new YellowBlock({ x: 9, y: 0 }),
+          new Blueberry({ x: 15, y: -17 }),
+          new Strawberry({ x: 15, y: -14 })
         ],
         clone: arguments.callee,
         nextLevel: level_last
