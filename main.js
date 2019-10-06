@@ -53,6 +53,7 @@ define([
       "tree",
       "game_state/dead",
       "game_state/victory",
+      "game_state/title",
       "blocks/green",
       "blocks/yellow",
       "blocks/pink",
@@ -887,6 +888,44 @@ define([
       return me;
     }
 
+    function titleState() {
+      const me = {
+        enabled: false,
+        enable: enable,
+        disable: disable
+      };
+      function enable() {
+        g.chains.update.insertBefore(update, g.chains.update.objects);
+        g.chains.draw.unshift(draw);
+        g.on("keydown", keydown);
+      }
+      function draw(g, next) {
+        // Draw HUD
+        next(g);
+        g.fillStyle("rgba(255,255,255,0.5)");
+        g.fillRectangle(0, 0, game.width, game.height);
+        g.drawCenteredImage(
+          images["game_state/title"],
+          game.width / 2,
+          game.height / 2
+        );
+      }
+      function keydown(key) {
+        if (key === "enter") {
+          g.changeState(gameplayState());
+        }
+      }
+      function update(dt, next) {
+        // next(dt)
+      }
+      function disable() {
+        g.chains.update.remove(update);
+        g.chains.draw.remove(draw);
+        g.removeListener("keydown", keydown);
+      }
+      return me;
+    }
+
     function level_sym1() {
       return {
         name: "Level1",
@@ -1023,7 +1062,7 @@ define([
     var player;
 
     g.changeLevel(level_sym1());
-    g.changeState(gameplayState());
+    g.changeState(titleState());
     game.objects.handlePending();
     g.start();
 
