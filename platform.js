@@ -146,35 +146,34 @@ Math.easeOutQuad = function(t) {
   return -1 * t * (t - 2);
 };
 
-define(["eventemitter"], function(eventemitter) {
-  var platform = {};
-  eventemitter._inherit(platform);
+import eventemitter from "./eventemitter.js";
+var platform = {};
+eventemitter._inherit(platform);
 
-  // Handle onload
-  (function() {
-    var loaded = false;
-    function callback() {
-      if (!loaded) {
-        loaded = true;
-        platform.emit("load");
+// Handle onload
+(function() {
+  var loaded = false;
+  function callback() {
+    if (!loaded) {
+      loaded = true;
+      platform.emit("load");
+    }
+  }
+  /* Mozilla, Chrome, Opera */
+  if (document.addEventListener) {
+    document.addEventListener("DOMContentLoaded", callback, false);
+  }
+  /* Safari, iCab, Konqueror */
+  if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
+    var DOMLoadTimer = setInterval(function() {
+      if (/loaded|complete/i.test(document.readyState)) {
+        callback();
+        clearInterval(DOMLoadTimer);
       }
-    }
-    /* Mozilla, Chrome, Opera */
-    if (document.addEventListener) {
-      document.addEventListener("DOMContentLoaded", callback, false);
-    }
-    /* Safari, iCab, Konqueror */
-    if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
-      var DOMLoadTimer = setInterval(function() {
-        if (/loaded|complete/i.test(document.readyState)) {
-          callback();
-          clearInterval(DOMLoadTimer);
-        }
-      }, 10);
-    }
-    /* Other web browsers */
-    window.onload = callback;
-  })();
+    }, 10);
+  }
+  /* Other web browsers */
+  window.onload = callback;
+})();
 
-  return platform;
-});
+export default platform;
