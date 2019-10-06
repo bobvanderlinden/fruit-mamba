@@ -39,6 +39,7 @@ define([
       "square",
       "snake/head",
       "snake/rope",
+      "snake/tail",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
@@ -53,6 +54,7 @@ define([
       "tree",
       "game_state/dead",
       "game_state/victory",
+      "game_state/title",
       "blocks/green",
       "blocks/yellow",
       "blocks/pink",
@@ -247,6 +249,34 @@ define([
       });
     })();
 
+    function drawTail(g, segment) {
+      g.save();
+
+      const diff = new Vector(0, 0);
+
+      if(segment.oldPosition) {
+        diff.addV(segment.oldPosition);
+        diff.substract(segment.position.x, segment.position.y);
+      } else {
+        // no old position, assume we face the right
+        diff.add(-1, 0);
+      }
+
+      const x = diff.x / 2;
+      const y = diff.y / 2;
+
+      g.context.translate(
+        segment.position.x + x,
+        segment.position.y + y
+      );
+
+      g.context.rotate(y ? Math.PI * y : x > 0 ? Math.PI * 2 : Math.PI);
+      g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+      g.drawCenteredImage(images["snake/tail"], 0, 0);
+
+      g.restore();
+    }
+
     function drawRope(g, segment) {
       if (segment.child) {
         g.save();
@@ -269,7 +299,12 @@ define([
 
         if (segment.child.child) {
           drawRope(g, segment.child);
+        } else {
+          drawTail(g, segment.child);
         }
+      } else {
+        // we just have the head, draw tail directly
+        drawTail(g, segment);
       }
     }
 
@@ -354,6 +389,10 @@ define([
       }
 
       setPosition(x, y) {
+        if(this.position){
+          this.oldPosition = new Vector(this.position.x, this.position.y);
+        }
+
         this.removeFromGrid();
         this.position.set(x, y);
         this.addToGrid();
@@ -793,6 +832,23 @@ define([
       return me;
     }
 
+    // draw responsive image which keeps to canvas boundaries
+    function drawOverlayImage(g, image) {
+      g.save();
+      const scaleX = game.width / image.width;
+      const scaleY = game.height / image.height;
+      const scale = Math.min(scaleX, scaleY);
+
+      g.context.scale(scale, scale);
+
+      g.drawCenteredImage(
+        image,
+        game.width / 2 / scale,
+        game.height / 2 / scale
+      );
+      g.restore();
+    }
+
     //#states
     function gameplayState() {
       const me = {
@@ -891,11 +947,8 @@ define([
         next(g);
         g.fillStyle("rgba(251,228,12,0.5)");
         g.fillRectangle(0, 0, game.width, game.height);
-        g.drawCenteredImage(
-          images["game_state/victory"],
-          game.width / 2,
-          game.height / 2
-        );
+
+        drawOverlayImage(g, images["game_state/victory"]);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -933,16 +986,49 @@ define([
         next(g);
         g.fillStyle("rgba(0,0,0,0.5)");
         g.fillRectangle(0, 0, game.width, game.height);
-        g.drawCenteredImage(
-          images["game_state/dead"],
-          game.width / 2,
-          game.height / 2
-        );
+
+        drawOverlayImage(g, images["game_state/dead"]);
       }
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
           g.restartLevel();
+          g.changeState(gameplayState());
+        }
+      }
+      function update(dt, next) {
+        // next(dt)
+      }
+      function disable() {
+        g.chains.update.remove(update);
+        g.chains.draw.remove(draw);
+        g.removeListener("keydown", keydown);
+      }
+      return me;
+    }
+
+    function titleState() {
+      const me = {
+        enabled: false,
+        enable: enable,
+        disable: disable
+      };
+      function enable() {
+        g.chains.update.insertBefore(update, g.chains.update.objects);
+        g.chains.draw.unshift(draw);
+        g.on("keydown", keydown);
+      }
+      function draw(g, next) {
+        // Draw HUD
+        next(g);
+
+        g.fillStyle("rgba(255,255,255,0.5)");
+        g.fillRectangle(0, 0, game.width, game.height);
+
+        drawOverlayImage(g, images["game_state/title"]);
+      }
+      function keydown(key) {
+        if (key === "enter") {
           g.changeState(gameplayState());
         }
       }
@@ -1093,7 +1179,7 @@ define([
     var player;
 
     g.changeLevel(level_sym1());
-    g.changeState(gameplayState());
+    g.changeState(titleState());
     game.objects.handlePending();
     g.start();
 
