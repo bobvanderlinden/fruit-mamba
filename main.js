@@ -38,6 +38,7 @@ define([
       "test",
       "square",
       "snake/head",
+      "snake/rope",
       "snake/grape",
       "snake/orange",
       "snake/strawberry",
@@ -186,8 +187,11 @@ define([
         // }
         // Follow player
         var targetx = player.position.x - (game.width * 0.5) / ptm;
-        const minTargety = (game.height * 0.5) / ptm;
-        var targety = Math.max(minTargety - player.position.y, minTargety);
+        // center on screen except if we're at the bottom of the level, show just one empty row below the level
+        var targety = Math.max(
+          (game.height * 0.5) / ptm - player.position.y,
+          (game.height - 1.5 * ptm) / ptm
+        );
 
         game.camera.targetx = targetx;
         game.camera.targety = targety;
@@ -227,9 +231,36 @@ define([
         game.objects.lists.foreground.each(o => {
           o.drawForeground(g);
         });
+        drawRope(g, player);
         next(g);
       });
     })();
+
+    function drawRope(g, segment) {
+      if (segment.child) {
+        g.save();
+
+        // draw rope
+        const diff = new Vector(
+          segment.position.x,
+          segment.position.y
+        ).substract(segment.child.position.x, segment.child.position.y);
+        g.context.translate(
+          segment.position.x - diff.x / 2,
+          segment.position.y - diff.y / 2
+        );
+        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        const hpi = Math.PI * 0.5;
+        g.context.rotate(diff.y === 0 ? 0 : diff.y > 0 ? hpi : -hpi);
+        g.drawCenteredImage(images["snake/rope"], 0, 0);
+
+        g.restore();
+
+        if (segment.child.child) {
+          drawRope(g, segment.child);
+        }
+      }
+    }
 
     // Draw debug objects
     // game.chains.draw.push(function(g, next) {
@@ -597,12 +628,13 @@ define([
         game.objects.lists.export.each(obj => {
           items.push(obj);
         });
-        const str = items
+        let str = items
           .map(
             item =>
-              `new ${item.constructor.name}(${item.position.x}, ${item.position.y}),`
+              `new ${item.constructor.name}({ x: ${item.position.x}, y: ${item.position.y}}),`
           )
           .join("\n");
+        str += "new Start({ x: 2, y: -1 })";
         console.log(str);
       }
       g.on("mousedown", function(button) {
@@ -884,6 +916,65 @@ define([
             x: 13,
             y: -7
           })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_last
+      };
+    }
+
+    function level_sym2() {
+      return {
+        name: "Level 2",
+        objects: [
+          new Start({ x: 2, y: -1 }),
+          new Tree({ x: -19, y: -6 }),
+          new GoldenApple({ x: -18, y: -7 }),
+          new PinkBlock({ x: -7, y: -9 }),
+          new Banana({ x: -2, y: -8 }),
+          new Banana({ x: -2, y: -7 }),
+          new Banana({ x: -2, y: -5 }),
+          new Banana({ x: -2, y: -4 }),
+          new YellowBlock({ x: 10, y: -5 }),
+          new Grape({ x: 11, y: -8 }),
+          new Grape({ x: 11, y: -7 }),
+          new Grape({ x: 11, y: -6 }),
+          new Orange({ x: 9, y: -6 }),
+          new Orange({ x: 7, y: -6 }),
+          new Strawberry({ x: 6, y: -4 }),
+          new Strawberry({ x: 6, y: -2 }),
+          new Blueberry({ x: 3, y: -2 }),
+          new Banana({ x: 3, y: -1 }),
+          new YellowBlock({ x: -1, y: -3 }),
+          new PinkBlock({ x: 6, y: -1 }),
+          new GreenBlock({ x: 2, y: 0 })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_last
+      };
+    }
+
+    function level_sym3() {
+      return {
+        name: "Level 3",
+        objects: [
+          new Start({ x: 2, y: -1 }),
+          new Banana({ x: 5, y: -1 }),
+          new Orange({ x: 7, y: -7 }),
+          new Grape({ x: 13, y: -2 }),
+          new GoldenApple({ x: 17, y: -17 }),
+          new Tree({ x: 18, y: -16 }),
+          new PinkBlock({ x: 14, y: -12 }),
+          new YellowBlock({ x: 8, y: -12 }),
+          new YellowBlock({ x: 5, y: -9 }),
+          new GreenBlock({ x: 8, y: -6 }),
+          new GreenBlock({ x: 12, y: -5 }),
+          new PinkBlock({ x: 15, y: -3 }),
+          new PinkBlock({ x: 12, y: -1 }),
+          new GreenBlock({ x: 2, y: 0 }),
+          new YellowBlock({ x: 5, y: 0 }),
+          new YellowBlock({ x: 9, y: 0 }),
+          new Blueberry({ x: 15, y: -17 }),
+          new Strawberry({ x: 15, y: -14 })
         ],
         clone: arguments.callee,
         nextLevel: level_last
