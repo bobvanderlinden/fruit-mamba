@@ -233,9 +233,12 @@ define([
       );
     })();
 
-    // Draw foreground
+    // Draw objects
     (function() {
       game.chains.draw.push(function(g, next) {
+        game.objects.lists.background.each(o => {
+          o.drawBackground(g);
+        });
         game.objects.lists.foreground.each(o => {
           o.drawForeground(g);
         });
@@ -525,10 +528,18 @@ define([
     }
 
     class Tree extends Cell {
-      static tile = images["tree"];
+      static foreground = false;
+      static background = true;
       static export = true;
+      static tile = images.tree;
+
       constructor({ x, y }) {
-        super({ x, y });
+        super(...arguments);
+        this.position = new Vector(x, y);
+      }
+
+      drawBackground(g) {
+        return Cell.prototype.drawForeground.call(this, g);
       }
     }
 
