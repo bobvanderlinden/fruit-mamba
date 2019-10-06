@@ -44,6 +44,10 @@ define([
       "snake/blueberry",
       "snake/banana",
       "fruit/grape",
+      "fruit/orange",
+      "fruit/strawberry",
+      "fruit/blueberry",
+      "fruit/banana",
       "fruit/golden_apple",
       "tree",
       "game_state/dead",
@@ -496,7 +500,22 @@ define([
       static tile = images["fruit/grape"];
       static segmentTile = images["snake/grape"];
     }
-
+    class Orange extends Fruit {
+      static tile = images["fruit/orange"];
+      static segmentTile = images["snake/orange"];
+    }
+    class Strawberry extends Fruit {
+      static tile = images["fruit/strawberry"];
+      static segmentTile = images["snake/strawberry"];
+    }
+    class Blueberry extends Fruit {
+      static tile = images["fruit/blueberry"];
+      static segmentTile = images["snake/blueberry"];
+    }
+    class Banana extends Fruit {
+      static tile = images["fruit/banana"];
+      static segmentTile = images["snake/banana"];
+    }
     class GoldenAppel extends Fruit {
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
@@ -526,6 +545,10 @@ define([
       let items = [
         Box,
         Grape,
+        Orange,
+        Strawberry,
+        Blueberry,
+        Banana,
         GoldenAppel,
         Tree,
         GreenBlock,
