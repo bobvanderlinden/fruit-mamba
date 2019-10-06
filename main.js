@@ -727,6 +727,12 @@ define([
         if (key === "r") {
           game.restartLevel();
           return;
+        } else if (key === "n") {
+          game.nextLevel();
+          return;
+        } else if (key === "m") {
+          game.changeLevel(level_sym1());
+          return;
         }
 
         const movement = new Vector(
