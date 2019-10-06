@@ -752,7 +752,9 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.drawImage(images["game_state/victory"], 0, 0, 1024, 512);
+        g.fillStyle("rgba(251,228,12,0.5)")
+        g.fillRectangle(0, 0, game.width, game.height)
+        g.drawCenteredImage(images["game_state/victory"], game.width/2, game.height/2);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -781,7 +783,6 @@ define([
       var time = 0;
       let body = document.body;
       function enable() {
-        body.classList.add("dead");
         g.chains.update.insertBefore(update, g.chains.update.objects);
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
@@ -789,7 +790,9 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.drawImage(images["game_state/dead"], 400, 300, 1024, 512);
+        g.fillStyle("rgba(0,0,0,0.5)")
+        g.fillRectangle(0, 0, game.width, game.height)
+        g.drawCenteredImage(images["game_state/dead"], game.width/2, game.height/2);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -802,7 +805,6 @@ define([
         // next(dt)
       }
       function disable() {
-        body.classList.remove("dead");
         g.chains.update.remove(update);
         g.chains.draw.remove(draw);
         g.removeListener("keydown", keydown);
