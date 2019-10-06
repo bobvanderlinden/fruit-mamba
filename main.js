@@ -727,6 +727,12 @@ define([
         if (key === "r") {
           game.restartLevel();
           return;
+        } else if (key === "n") {
+          game.nextLevel();
+          return;
+        } else if (key === "m") {
+          game.changeLevel(level_sym1());
+          return;
         }
 
         const movement = new Vector(
@@ -918,7 +924,7 @@ define([
           })
         ],
         clone: arguments.callee,
-        nextLevel: level_last
+        nextLevel: level_sym2
       };
     }
 
@@ -949,7 +955,7 @@ define([
           new GreenBlock({ x: 2, y: 0 })
         ],
         clone: arguments.callee,
-        nextLevel: level_last
+        nextLevel: level_sym3
       };
     }
 
