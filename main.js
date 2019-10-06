@@ -55,6 +55,7 @@ define([
       "game_state/dead",
       "game_state/victory",
       "game_state/title",
+      "game_state/next_level",
       "blocks/green",
       "blocks/yellow",
       "blocks/pink",
@@ -898,10 +899,10 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.fillStyle("rgba(251,228,12,0.5)");
+        g.fillStyle("rgba(251,228,12,0.2)");
         g.fillRectangle(0, 0, game.width, game.height);
 
-        drawOverlayImage(g, images["game_state/victory"]);
+        drawOverlayImage(g, images["game_state/next_level"]);
       }
       function keydown(key) {
         if (key === "enter") {
