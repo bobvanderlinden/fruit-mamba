@@ -764,6 +764,23 @@ define([
       }
     });
 
+    // draw responsive image which keeps to canvas boundaries
+    function drawOverlayImage(g, image) {
+      g.save();
+      const scaleX = game.width / image.width;
+      const scaleY = game.height / image.height;
+      const scale = Math.min(scaleX, scaleY);
+
+      g.context.scale(scale, scale);
+
+      g.drawCenteredImage(
+        image,
+        game.width / 2 / scale,
+        game.height / 2 / scale
+      );
+      g.restore();
+    }
+
     //#states
     function gameplayState() {
       const me = {
@@ -860,11 +877,8 @@ define([
         next(g);
         g.fillStyle("rgba(251,228,12,0.5)");
         g.fillRectangle(0, 0, game.width, game.height);
-        g.drawCenteredImage(
-          images["game_state/victory"],
-          game.width / 2,
-          game.height / 2
-        );
+
+        drawOverlayImage(g, images["game_state/victory"]);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -902,11 +916,8 @@ define([
         next(g);
         g.fillStyle("rgba(0,0,0,0.5)");
         g.fillRectangle(0, 0, game.width, game.height);
-        g.drawCenteredImage(
-          images["game_state/dead"],
-          game.width / 2,
-          game.height / 2
-        );
+
+        drawOverlayImage(g, images["game_state/dead"]);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -940,13 +951,11 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
+
         g.fillStyle("rgba(255,255,255,0.5)");
         g.fillRectangle(0, 0, game.width, game.height);
-        g.drawCenteredImage(
-          images["game_state/title"],
-          game.width / 2,
-          game.height / 2
-        );
+
+        drawOverlayImage(g, images["game_state/title"]);
       }
       function keydown(key) {
         if (key === "enter") {
