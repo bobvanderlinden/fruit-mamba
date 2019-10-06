@@ -762,7 +762,7 @@ define([
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(game.level.nextLevel());
+          g.nextLevel();
           g.changeState(gameplayState());
         }
       }
@@ -804,7 +804,7 @@ define([
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(game.level.clone());
+          g.restartLevel();
           g.changeState(gameplayState());
         }
       }
