@@ -68,7 +68,7 @@ define([
       "background/cloud3",
       "background/cloud4"
     ],
-    audio: ["test"]
+    audio: ["test", "eat01", "eat02", "eat03", "victory01", "died01"]
   };
   var g, game;
   platform.once("load", function() {
@@ -114,6 +114,14 @@ define([
     g.objects.lists.export = g.objects.createIndexList("export");
     g.objects.lists.cell = g.objects.createIndexList("cell");
     g.objects.lists.editorVisible = g.objects.createIndexList("editorVisible");
+
+    const eatSounds = [audio.eat01, audio.eat02, audio.eat03];
+    const victorySounds = [audio.victory01];
+    const diedSounds = [audio.died01];
+
+    function pickRandom(arr) {
+      return arr[(arr.length * Math.random()) | 0];
+    }
 
     // Auto-refresh
     // (function() {
@@ -604,6 +612,8 @@ define([
         player.child = segment;
         player.setPosition(this.position.x, this.position.y);
         this.destroy();
+
+        pickRandom(eatSounds).play();
       }
     }
 
@@ -631,6 +641,7 @@ define([
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
         g.changeState(winState());
+        pickRandom(victorySounds).play();
       }
     }
 
@@ -1009,9 +1020,8 @@ define([
         enable: enable,
         disable: disable
       };
-      var time = 0;
-      let body = document.body;
       function enable() {
+        pickRandom(diedSounds).play();
         g.chains.update.insertBefore(update, g.chains.update.objects);
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
@@ -1196,7 +1206,12 @@ define([
           new YellowBlock({ x: 5, y: 0 }),
           new YellowBlock({ x: 9, y: 0 }),
           new Blueberry({ x: 15, y: -17 }),
-          new Strawberry({ x: 15, y: -14 })
+          new Strawberry({ x: 15, y: -14 }),
+          new GreenBlock({ x: 18, y: -5 }),
+          new YellowBlock({ x: 20, y: -6 }),
+          new PinkBlock({ x: 22, y: -7 }),
+          new PinkBlock({ x: 18, y: -8 }),
+          new YellowBlock({ x: 16, y: -10 })
         ],
         clone: arguments.callee,
         nextLevel: level_last
