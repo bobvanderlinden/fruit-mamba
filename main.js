@@ -58,7 +58,8 @@ define([
       "blocks/pink",
       "instructions/go_to_apple",
       "instructions/press_right",
-      "instructions/press_up"
+      "instructions/press_up",
+      "background"
     ],
     audio: ["test"]
   };
@@ -167,11 +168,23 @@ define([
 
       function drawCamera(g, next) {
         var ptm = getPixelsPerMeter();
-        // g.save();
-        // g.context.translate(-x*ptm,y*ptm);
-        // g.fillStyle(pattern);
-        // g.fillRectangle(x*ptm,-y*ptm,game.width,game.height);
-        // g.restore();
+
+        // Draw background.
+        if (!pattern) {
+          pattern = g.context.createPattern(images.background, "repeat");
+        }
+        g.save();
+        g.context.translate(-game.camera.x * ptm, game.camera.y * ptm);
+        g.fillStyle(pattern);
+        g.fillRectangle(
+          game.camera.x * ptm,
+          -game.camera.y * ptm,
+          game.width,
+          game.height
+        );
+        g.restore();
+
+        // Transform viewport to match camera.
         g.save();
         g.context.scale(ptm, ptm);
         g.context.lineWidth /= ptm;
@@ -182,9 +195,6 @@ define([
 
       function updateCamera(dt) {
         var ptm = getPixelsPerMeter();
-        // if (!pattern) {
-        //   pattern = g.context.createPattern(images.background,'repeat');
-        // }
         // Follow player
         var targetx = player.position.x - (game.width * 0.5) / ptm;
         // center on screen except if we're at the bottom of the level, show just one empty row below the level
