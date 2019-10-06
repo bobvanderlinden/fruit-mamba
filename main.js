@@ -966,19 +966,30 @@ define([
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
       }
-      function draw(g, next) {
+      function draw(_g, next) {
         // Draw HUD
-        next(g);
-        g.fillStyle("rgba(251,228,12,0.2)");
-        g.fillRectangle(0, 0, game.width, game.height);
+        next(_g);
+        _g.fillStyle("rgba(251,228,12,0.2)");
+        _g.fillRectangle(0, 0, game.width, game.height);
 
-        drawOverlayImage(g, images["game_state/next_level"]);
+        if(g.hasNextLevel()) {
+          drawOverlayImage(_g, images["game_state/next_level"]);
+        } else {
+          drawOverlayImage(_g, images["game_state/victory"]);
+        }
       }
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.nextLevel();
-          g.changeState(gameplayState());
+          if(g.hasNextLevel()) {
+            g.nextLevel();
+            g.changeState(gameplayState());
+          } else {
+            // start again
+            g.changeLevel(level_sym1());
+            g.changeState(titleState());
+          }
+
         }
       }
       function update(dt, next) {

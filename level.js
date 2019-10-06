@@ -27,6 +27,10 @@ define(function() {
     g.restartLevel = function() {
       g.changeLevel(g.level.clone());
     };
+    g.hasNextLevel = function(level) {
+      const _level = level || g.level;
+      return _level && _level.nextLevel;
+    };
     g.nextLevel = function(level) {
       var nextLevel = (level || g.level).nextLevel();
       g.changeLevel(nextLevel);
