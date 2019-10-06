@@ -45,7 +45,11 @@ define([
       "snake/banana",
       "fruit/grape",
       "fruit/golden_apple",
-      "tree"
+      "tree",
+      "game_state/dead",
+      "blocks/green",
+      "blocks/yellow",
+      "blocks/pink",
     ],
     audio: ["test"]
   };
@@ -91,6 +95,7 @@ define([
     g.objects.lists.foreground = g.objects.createIndexList("foreground");
     g.objects.lists.grounded = g.objects.createIndexList("grounded");
     g.objects.lists.export = g.objects.createIndexList("export");
+    g.objects.lists.cell = g.objects.createIndexList("cell");
 
     // Auto-refresh
     // (function() {
@@ -205,6 +210,24 @@ define([
       g.chains.draw.insertBefore(drawCamera, g.chains.draw.objects);
     })();
 
+    (function() {
+      g.chains.update.push(
+        (g.chains.update.camera = function(dt, next) {
+          next(dt);
+          game.objects.lists.cell.each(o => {
+            if (!o instanceof Cell) {
+              return;
+            }
+            if (o._grid) {
+              return;
+            }
+            o._grid = true;
+            o.addToGrid();
+          })
+        })
+      );
+    })();
+
     // Draw foreground
     (function() {
       game.chains.draw.push(function(g, next) {
@@ -278,13 +301,12 @@ define([
       constructor({ x, y, tile }) {
         this.position = new Vector(x, y);
         this.tile = tile || this.constructor.tile;
-        addToCell(this.position.x, this.position.y, this);
       }
 
       setPosition(x, y) {
-        removeFromCell(this.position.x, this.position.y, this);
+        this.removeFromGrid()
         this.position.set(x, y);
-        addToCell(this.position.x, this.position.y, this);
+        this.addToGrid()
       }
 
       drawTile(g) {
@@ -294,8 +316,17 @@ define([
         g.drawCenteredImage(this.tile, 0, 0);
         g.restore();
       }
+
+      addToGrid() {
+        addToCell(this.position.x, this.position.y, this);
+      }
+
+      removeFromGrid() {
+        removeFromCell(this.position.x, this.position.y, this);
+      }
     }
     Cell.prototype.foreground = true;
+    Cell.prototype.cell = true;
 
     class StaticCell extends Cell {}
 
@@ -314,6 +345,42 @@ define([
       }
     }
 
+    class Start {
+      constructor({x,y}) {
+        this.position = new Vector(x,y);
+      }
+
+      start() {
+        if (this.spawned) {
+          return;
+        }
+        player = new Player({
+          x: this.position.x,
+          y: this.position.y,
+          tile: images['snake/head']
+        });
+        game.objects.add(player);
+        this.spawned = true;
+      }
+    }
+
+    (function() {
+      g.on('levelchanged', () => {
+        game.objects.objects.each(o => {
+          if (o.start) {
+            o.start();
+          }
+        })
+      })
+
+      g.on('levelunloaded', () => {
+        g.objects.objects.each(o => {
+          g.objects.remove(o);
+        });
+        g.objects.handlePending();
+      })
+    })();
+        
     class Player extends Segment {
       static updatable = true;
       static foreground = true;
@@ -353,7 +420,7 @@ define([
           }
 
           if ([...getSegments(this)].every(s => s.position.y > 0)) {
-            console.log(`you're dead`);
+            g.changeState(deadState())
           }
         }
       }
@@ -390,41 +457,6 @@ define([
         super({ x, y });
       }
     }
-
-    player = new Player({
-      x: 0,
-      y: 0,
-      tile: images["snake/head"]
-    });
-    g.objects.add(player);
-
-    let child = undefined;
-    const segmentImages = [
-      images["snake/grape"],
-      images["snake/orange"],
-      images["snake/strawberry"],
-      images["snake/blueberry"],
-      images["snake/banana"]
-    ];
-    for (let i = 0; i < 5; i++) {
-      const segment = new Segment({
-        child,
-        x: 5 - i,
-        y: 0,
-        tile: segmentImages[i % segmentImages.length]
-      });
-      g.objects.add(segment);
-      child = segment;
-    }
-    player.child = child;
-
-    g.objects.add(
-      new StaticCell({
-        x: 2,
-        y: 3,
-        tile: images["snake/banana"]
-      })
-    );
 
     function* getSegments(root) {
       let segment = root;
@@ -547,7 +579,7 @@ define([
 
     //#states
     function gameplayState() {
-      var me = {
+      const me = {
         enabled: false,
         enable: enable,
         disable: disable
@@ -555,13 +587,11 @@ define([
       function enable() {
         game.camera.reset();
         game.camera.smoothx += 300;
-        g.chains.update.push(update);
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
       }
 
       function disable() {
-        g.chains.update.remove(update);
         g.chains.draw.remove(draw);
         g.removeListener("keydown", keydown);
       }
@@ -595,10 +625,6 @@ define([
 
       function mousedown() {}
 
-      function update(dt, next) {
-        next(dt);
-      }
-
       function draw(g, next) {
         // Draw HUD
         next(g);
@@ -607,8 +633,66 @@ define([
       return me;
     }
 
+    function deadState(){
+      const me = {
+        enabled: false,
+        enable: enable,
+        disable: disable
+      };
+      var time = 0;
+      let body = document.body;
+      function enable() {
+        body.classList.add("dead");
+        g.chains.update.insertBefore(update, g.chains.update.objects);
+        g.chains.draw.unshift(draw);
+        g.on("keydown", keydown);
+      }
+      function draw(g,next) {
+        // Draw HUD
+        next(g);
+        g.drawImage(images["game_state/dead"],400,300, 1024, 512);
+      }
+      function keydown(key) {
+        if (key === "enter") {
+          g.objects.handlePending();
+          g.changeLevel(level_sym1())
+          g.changeState(gameplayState());
+        } 
+      }
+      function update(dt, next) {
+        // next(dt)
+      }
+      function disable() {
+        body.classList.remove("dead");
+        g.chains.update.remove(update);
+        g.chains.draw.remove(draw);
+        g.removeListener("keydown", keydown);
+      }
+      return me;
+    }
+
+    function level_sym1() {
+      return {
+        name: 'Level1',
+        objects: [
+          new Start({
+            x: 2,
+            y: -1
+          }),
+          new StaticCell({
+            x: 2,
+            y: 0,
+            tile: images["blocks/green"]
+          })
+        ],
+        clone: arguments.callee,
+			  nextLevel: null
+      }
+    }
+
     var player;
 
+    g.changeLevel(level_sym1())
     g.changeState(gameplayState());
     game.objects.handlePending();
     g.start();
