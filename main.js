@@ -15,9 +15,6 @@ function _defineProperty(obj, key, value) {
 import platform from "./platform.js";
 import Game from "./game.js";
 import Vector from "./vector.js";
-import StaticCollidable from "./staticcollidable.js";
-import LineSegment from "./linesegment.js";
-import editor from "./editor.js";
 import state from "./state.js";
 import level from "./level.js";
 import mouse from "./mouse.js";
@@ -25,9 +22,6 @@ import collision from "./collision.js";
 import keyboard from "./keyboard.js";
 import quake from "./quake.js";
 import resources from "./resources.js";
-import ObjectManager from "./objectmanager.js";
-import Graphics from "./graphics.js";
-import ParticleEmitter from "./particleemitter.js";
 var rs = {
   images: [
     "test",
@@ -168,7 +162,7 @@ function startGame(err) {
     }
 
     game.camera.reset = function() {
-      updateCamera(0.001);
+      updateCamera();
       game.camera.x = game.camera.targetx;
       game.camera.y = game.camera.targety;
       game.camera.smoothx = game.camera.x;
@@ -203,7 +197,7 @@ function startGame(err) {
       g.restore();
     }
 
-    function updateCamera(dt) {
+    function updateCamera() {
       var ptm = getPixelsPerMeter(); // Follow player
 
       var targetx = player.position.x - (game.width * 0.5) / ptm; // center on screen except if we're at the bottom of the level, show just one empty row below the level
@@ -231,7 +225,7 @@ function startGame(err) {
     g.chains.update.push(
       (g.chains.update.camera = function(dt, next) {
         next(dt);
-        updateCamera(dt);
+        updateCamera();
       })
     );
     g.chains.draw.camera = drawCamera;
@@ -986,8 +980,6 @@ function startGame(err) {
       }
     }
 
-    function mousedown() {}
-
     function draw(g, next) {
       // Draw HUD
       next(g);
@@ -1002,8 +994,6 @@ function startGame(err) {
       enable: enable,
       disable: disable
     };
-    var time = 0;
-    let body = document.body;
 
     function enable() {
       g.chains.update.insertBefore(update, g.chains.update.objects);
@@ -1041,7 +1031,7 @@ function startGame(err) {
       }
     }
 
-    function update(dt, next) {
+    function update() {
       // next(dt)
     }
 
@@ -1084,7 +1074,7 @@ function startGame(err) {
       }
     }
 
-    function update(dt, next) {
+    function update() {
       // next(dt)
     }
 
@@ -1124,7 +1114,7 @@ function startGame(err) {
       }
     }
 
-    function update(dt, next) {
+    function update() {
       // next(dt)
     }
 
