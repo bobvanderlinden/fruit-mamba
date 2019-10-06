@@ -1202,6 +1202,59 @@ define([
           new YellowBlock({ x: 16, y: -10 })
         ],
         clone: arguments.callee,
+        nextLevel: level_4
+      };
+    }
+
+    function level_4() {
+      return {
+        name: "4",
+        objects: [
+          new PinkBlock({ x: 4, y: -10 }),
+          new Tree({ x: 4, y: -13 }),
+          new GoldenApple({ x: 4, y: -14 }),
+          new YellowBlock({ x: 2, y: -7 }),
+          new GreenBlock({ x: 5, y: -6 }),
+          new Banana({ x: 5, y: -7 }),
+          new GreenBlock({ x: 0, y: -10 }),
+          new YellowBlock({ x: 8, y: -7 }),
+          new GreenBlock({ x: 11, y: -9 }),
+          new Orange({ x: 11, y: -10 }),
+          new Strawberry({ x: 8, y: -8 }),
+          new Start({ x: 0, y: -11 })
+        ],
+        clone: arguments.callee,
+        nextLevel: level_5
+      };
+    }
+
+    function level_5() {
+      return {
+        name: "5",
+        objects: [
+          new GreenBlock({ x: 0, y: -2 }),
+          new YellowBlock({ x: 3, y: -2 }),
+          new PinkBlock({ x: 2, y: -4 }),
+          new GreenBlock({ x: 6, y: -2 }),
+          new PinkBlock({ x: 7, y: -3 }),
+          new GreenBlock({ x: 7, y: -4 }),
+          new Banana({ x: 5, y: -3 }),
+          new Strawberry({ x: 5, y: -4 }),
+          new PinkBlock({ x: -3, y: -2 }),
+          new Orange({ x: -4, y: -3 }),
+          new GreenBlock({ x: -6, y: -2 }),
+          new YellowBlock({ x: -5, y: -5 }),
+          new GreenBlock({ x: -5, y: -5 }),
+          new GreenBlock({ x: -4, y: -6 }),
+          new YellowBlock({ x: 2, y: -6 }),
+          new PinkBlock({ x: 5, y: -6 }),
+          new Tree({ x: 5, y: -9 }),
+          new YellowBlock({ x: 3, y: -5 }),
+          new GreenBlock({ x: 6, y: -5 }),
+          new GoldenApple({ x: 5, y: -11 }),
+          new Start({ x: 1, y: -5 })
+        ],
+        clone: arguments.callee,
         nextLevel: level_last
       };
     }
