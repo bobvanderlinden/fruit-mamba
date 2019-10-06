@@ -113,6 +113,7 @@ define([
     g.objects.lists.grounded = g.objects.createIndexList("grounded");
     g.objects.lists.export = g.objects.createIndexList("export");
     g.objects.lists.cell = g.objects.createIndexList("cell");
+    g.objects.lists.editorVisible = g.objects.createIndexList("editorVisible");
 
     // Auto-refresh
     // (function() {
@@ -481,8 +482,10 @@ define([
     }
 
     class Start {
+      static editorVisible = true;
       constructor({ x, y }) {
         this.position = new Vector(x, y);
+        this.tile = images.box;
       }
 
       start() {
@@ -496,6 +499,12 @@ define([
         });
         game.objects.add(player);
         this.spawned = true;
+      }
+
+      drawForeground(g) {
+        console.log("drawForeground");
+        g.fillStyle("red");
+        g.fillCircle(this.position.x, this.position.y, 0.3);
       }
     }
 
@@ -546,11 +555,15 @@ define([
           (hasCell(x, y - 1, Segment) || hasCell(x, y - 1, StaticCell))
         );
       }
+      moveTo(x, y) {
+        super.moveTo(x, y);
+        this._dt = 0;
+      }
       update(dt) {
         this._dt += dt;
 
-        if (this._dt > 0.5) {
-          this._dt = 0;
+        while (this._dt > 0.1) {
+          this._dt -= 0.1;
 
           // Do not allow moving when not touching ground
           if (!this.isOnGround()) {
@@ -561,6 +574,7 @@ define([
 
           if ([...getSegments(this)].every(s => s.position.y > 0)) {
             g.changeState(deadState());
+            return;
           }
         }
       }
@@ -663,27 +677,74 @@ define([
     }
 
     // #editor
-    function startEditor() {
-      let items = [
-        Box,
-        Grape,
-        Orange,
-        Strawberry,
-        Blueberry,
-        Banana,
-        GoldenApple,
-        Tree,
-        GreenBlock,
-        YellowBlock,
-        PinkBlock,
-        Cloud1,
-        Cloud2,
-        Cloud3,
-        Cloud4
-      ];
-      let item = items[0];
+    const items = [
+      Start,
+      Box,
+      Grape,
+      Orange,
+      Strawberry,
+      Blueberry,
+      Banana,
+      GoldenApple,
+      Tree,
+      GreenBlock,
+      YellowBlock,
+      PinkBlock,
+      Cloud1,
+      Cloud2,
+      Cloud3,
+      Cloud4
+    ];
+    let item = items[0];
+    let leveldef = [];
+    function editorState() {
+      const me = {
+        enable,
+        disable
+      };
 
-      var leveldef = [];
+      function enable() {
+        console.log("enable editor");
+        game.chains.draw.push(draw);
+        g.on("mousedown", mousedown);
+        g.on("keydown", keydown);
+        g.chains.update.push(update);
+        g.chains.update.remove(game.chains.update.camera);
+        g.chains.update.remove(game.chains.update.objects);
+      }
+
+      function disable() {
+        console.log("disable editor");
+        game.chains.draw.remove(draw);
+        g.removeListener("mousedown", mousedown);
+        g.removeListener("keydown", keydown);
+        g.chains.update.remove(update);
+        g.chains.update.push(game.chains.update.camera);
+        g.chains.update.push(game.chains.update.objects);
+      }
+
+      function update(dt, next) {
+        const movement = new Vector(
+          (game.keys.right ? 1 : 0) - (game.keys.left ? 1 : 0),
+          (game.keys.up ? 1 : 0) - (game.keys.down ? 1 : 0)
+        );
+
+        game.camera.x += movement.x * dt * 10;
+        game.camera.y += movement.y * dt * 10;
+
+        game.objects.handlePending();
+
+        next(dt);
+      }
+
+      function createLevel() {
+        return {
+          name: "level",
+          objects: leveldef.map(([item, x, y]) => new item({ x, y })),
+          clone: createLevel,
+          nextLevel: createLevel
+        };
+      }
 
       function getPosition() {
         var tmp = new Vector();
@@ -692,8 +753,10 @@ define([
         tmp.y = Math.round(tmp.y);
         return tmp;
       }
+
       function place() {
         var p = getPosition();
+        leveldef.push([item, p.x, p.y]);
         game.objects.add(
           new item({
             x: p.x,
@@ -705,38 +768,49 @@ define([
         var p = getPosition();
         const obj = getCell(p.x, p.y);
         obj.forEach(o => o.destroy());
+        leveldef = leveldef.filter(([_, x, y]) => x !== p.x || y !== p.y);
       }
-      function exportConsole() {
-        const items = [];
+      function load() {
+        leveldef = [];
         game.objects.lists.export.each(obj => {
-          items.push(obj);
+          leveldef.push([obj.constructor, obj.position.x, obj.position.y]);
         });
-        let str = items
-          .map(
-            item =>
-              `new ${item.constructor.name}({ x: ${item.position.x}, y: ${item.position.y}}),`
-          )
+      }
+      function save() {
+        let str = leveldef
+          .map(([item, x, y]) => `new ${item.name}({ x: ${x}, y: ${y}}),`)
           .join("\n");
-        str += "new Start({ x: 2, y: -1 })";
+        str += "\nnew Start({ x: 2, y: -1 })";
         console.log(str);
       }
-      g.on("mousedown", function(button) {
+
+      function mousedown(button) {
         if (button === 0) {
           place();
         } else if (button === 2) {
           deleteItem();
         }
-      });
-      g.on("keydown", function(button) {
-        if (button === "p") {
-          exportConsole();
+      }
+      function keydown(key) {
+        if (key === "p") {
+          save();
+        } else if (key === "i") {
+          load();
+        } else if (key === "e") {
+          game.changeState(gameplayState());
+        } else if (key === "r") {
+          game.changeLevel(createLevel());
         }
-        var d = (button === "]" ? 1 : 0) - (button === "[" ? 1 : 0);
+        var d = (key === "]" ? 1 : 0) - (key === "[" ? 1 : 0);
         item = items[(items.indexOf(item) + d + items.length) % items.length];
-      });
+      }
 
-      game.chains.draw.push(function(g, next) {
+      function draw(g, next) {
         next(g);
+
+        game.objects.lists.editorVisible.each(o => {
+          o.drawForeground(g);
+        });
 
         const leftTop = new Vector();
         game.camera.screenToWorld(Vector.zero, leftTop);
@@ -778,15 +852,9 @@ define([
           );
           g.context.globalAlpha = 1;
         }
-      });
-    }
-    var editorStarted = false;
-    game.on("keydown", function(button) {
-      if (button === "e" && !editorStarted) {
-        editorStarted = true;
-        startEditor();
       }
-    });
+      return me;
+    }
 
     // draw responsive image which keeps to canvas boundaries
     function drawOverlayImage(g, image) {
@@ -833,6 +901,8 @@ define([
         } else if (key === "m") {
           game.changeLevel(level_sym1());
           return;
+        } else if (key === "e") {
+          game.changeState(editorState());
         }
 
         const movement = new Vector(
