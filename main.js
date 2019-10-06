@@ -55,13 +55,18 @@ define([
       "game_state/dead",
       "game_state/victory",
       "game_state/title",
+      "game_state/next_level",
       "blocks/green",
       "blocks/yellow",
       "blocks/pink",
       "instructions/go_to_apple",
       "instructions/press_right",
       "instructions/press_up",
-      "background"
+      "background",
+      "background/cloud1",
+      "background/cloud2",
+      "background/cloud3",
+      "background/cloud4"
     ],
     audio: ["test", "eat01", "eat02", "eat03", "victory01", "died01"]
   };
@@ -262,7 +267,7 @@ define([
 
       const diff = new Vector(0, 0);
 
-      if(segment.oldPosition) {
+      if (segment.oldPosition) {
         diff.addV(segment.oldPosition);
         diff.substract(segment.position.x, segment.position.y);
       } else {
@@ -273,10 +278,7 @@ define([
       const x = diff.x / 2;
       const y = diff.y / 2;
 
-      g.context.translate(
-        segment.position.x + x,
-        segment.position.y + y
-      );
+      g.context.translate(segment.position.x + x, segment.position.y + y);
 
       g.context.rotate(y ? Math.PI * y : x > 0 ? Math.PI * 2 : Math.PI);
       g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
@@ -397,7 +399,7 @@ define([
       }
 
       setPosition(x, y) {
-        if(this.position){
+        if (this.position) {
           this.oldPosition = new Vector(this.position.x, this.position.y);
         }
 
@@ -659,6 +661,24 @@ define([
       }
     }
 
+    class Cloud1 extends Cell {
+      static export = true;
+      static tile = images["background/cloud1"];
+    }
+    class Cloud2 extends Cell {
+      static export = true;
+      static tile = images["background/cloud2"];
+    }
+
+    class Cloud3 extends Cell {
+      static export = true;
+      static tile = images["background/cloud3"];
+    }
+    class Cloud4 extends Cell {
+      static export = true;
+      static tile = images["background/cloud4"];
+    }
+
     function* getSegments(root) {
       let segment = root;
       while (segment) {
@@ -680,7 +700,11 @@ define([
       Tree,
       GreenBlock,
       YellowBlock,
-      PinkBlock
+      PinkBlock,
+      Cloud1,
+      Cloud2,
+      Cloud3,
+      Cloud4
     ];
     let item = items[0];
     let leveldef = [];
@@ -956,10 +980,10 @@ define([
       function draw(g, next) {
         // Draw HUD
         next(g);
-        g.fillStyle("rgba(251,228,12,0.5)");
+        g.fillStyle("rgba(251,228,12,0.2)");
         g.fillRectangle(0, 0, game.width, game.height);
 
-        drawOverlayImage(g, images["game_state/victory"]);
+        drawOverlayImage(g, images["game_state/next_level"]);
       }
       function keydown(key) {
         if (key === "enter") {
@@ -1173,7 +1197,12 @@ define([
           new YellowBlock({ x: 5, y: 0 }),
           new YellowBlock({ x: 9, y: 0 }),
           new Blueberry({ x: 15, y: -17 }),
-          new Strawberry({ x: 15, y: -14 })
+          new Strawberry({ x: 15, y: -14 }),
+          new GreenBlock({ x: 18, y: -5}),
+          new YellowBlock({ x: 20, y: -6}),
+          new PinkBlock({ x: 22, y: -7}),
+          new PinkBlock({ x: 18, y: -8}),
+          new YellowBlock({ x: 16, y: -10}),
         ],
         clone: arguments.callee,
         nextLevel: level_last
