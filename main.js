@@ -218,24 +218,6 @@ define([
       g.chains.draw.insertBefore(drawCamera, g.chains.draw.objects);
     })();
 
-    (function() {
-      g.chains.update.push(
-        (g.chains.update.camera = function(dt, next) {
-          next(dt);
-          game.objects.lists.cell.each(o => {
-            if (!o instanceof Cell) {
-              return;
-            }
-            if (o._grid) {
-              return;
-            }
-            o._grid = true;
-            o.addToGrid();
-          });
-        })
-      );
-    })();
-
     // Draw objects
     (function() {
       game.chains.draw.push(function(g, next) {
@@ -312,6 +294,12 @@ define([
         delete grid[`${x}x${y}`];
       }
     }
+    g.objects.lists.cell.listeners.added.push(cell => {
+      cell.addToGrid();
+    });
+    g.objects.lists.cell.listeners.removed.push(cell => {
+      cell.removeFromGrid();
+    });
 
     // Player
 
@@ -338,14 +326,21 @@ define([
       }
 
       addToGrid() {
+        if (this._grid) {
+          throw new Error("object was already part of grid");
+        }
+        this._grid = true;
         addToCell(this.position.x, this.position.y, this);
       }
 
       removeFromGrid() {
+        if (!this._grid) {
+          throw new Error("object was not part of grid");
+        }
+        this._grid = false;
         removeFromCell(this.position.x, this.position.y, this);
       }
       destroy() {
-        this.removeFromGrid();
         game.objects.remove(this);
       }
     }
@@ -429,13 +424,6 @@ define([
             o.start();
           }
         });
-      });
-
-      g.on("levelunloaded", () => {
-        g.objects.objects.each(o => {
-          g.objects.remove(o);
-        });
-        g.objects.handlePending();
       });
     })();
 
