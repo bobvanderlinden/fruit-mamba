@@ -237,7 +237,7 @@ define([
     (function() {
       game.chains.draw.push(function(g, next) {
         game.objects.lists.foreground.each(o => {
-          o.drawTile(g);
+          o.drawForeground(g);
         });
         next(g);
       });
@@ -323,7 +323,7 @@ define([
         this.addToGrid();
       }
 
-      drawTile(g) {
+      drawForeground(g) {
         g.save();
         g.context.translate(this.position.x, this.position.y);
         g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
@@ -432,7 +432,7 @@ define([
         super(...arguments);
         this.velocity = new Vector(0, 0);
       }
-      drawTile(g) {
+      drawForeground(g) {
         g.save();
         g.context.translate(this.position.x, this.position.y);
         g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
@@ -642,7 +642,7 @@ define([
 
         if (item) {
           g.context.globalAlpha = 0.5;
-          item.prototype.drawTile.call(
+          item.prototype.drawForeground.call(
             {
               position: { x: p.x, y: p.y },
               tile: item.tile
