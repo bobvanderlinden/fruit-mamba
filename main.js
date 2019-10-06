@@ -248,6 +248,10 @@ define([
         const diff = new Vector(segment.position.x, segment.position.y).substract(segment.child.position.x, segment.child.position.y);
         g.context.translate(segment.position.x - diff.x/2, segment.position.y - diff.y/2);
         g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        const hpi = Math.PI * 0.5;
+        g.context.rotate(
+          diff.y === 0 ? 0 : diff.y > 0 ? hpi : -hpi
+        );
         g.drawCenteredImage(images["snake/rope"], 0, 0);
 
         g.restore();
