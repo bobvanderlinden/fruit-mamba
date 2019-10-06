@@ -3,13 +3,14 @@ define(function() {
     g.level = null;
     g.changeLevel = function(level) {
       if (this.level) {
-        this.level.objects.forEach(function(c) {
+        this.objects.objects.each(function(c) {
           g.objects.remove(c);
         });
         if (this.level.disable) {
           this.level.disable();
         }
       }
+      g.objects.handlePending();
       g.emit("levelunloaded");
       this.level = level;
       if (this.level) {

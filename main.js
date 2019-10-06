@@ -222,46 +222,6 @@ define([
       g.chains.draw.insertBefore(drawCamera, g.chains.draw.objects);
     })();
 
-    (function() {
-      g.chains.update.push(
-        (g.chains.update.camera = function(dt, next) {
-          next(dt);
-          game.objects.lists.cell.each(o => {
-            if (!o instanceof Cell) {
-              return;
-            }
-            if (o._grid) {
-              return;
-            }
-            o._grid = true;
-            o.addToGrid();
-          });
-        })
-      );
-    })();
-
-    function drawRope(g, segment) {
-      if(segment.child) {
-        g.save();
-
-        // draw rope
-        const diff = new Vector(segment.position.x, segment.position.y).substract(segment.child.position.x, segment.child.position.y);
-        g.context.translate(segment.position.x - diff.x/2, segment.position.y - diff.y/2);
-        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
-        const hpi = Math.PI * 0.5;
-        g.context.rotate(
-          diff.y === 0 ? 0 : diff.y > 0 ? hpi : -hpi
-        );
-        g.drawCenteredImage(images["snake/rope"], 0, 0);
-
-        g.restore();
-
-        if(segment.child.child) {
-          drawRope(g, segment.child);
-        }
-      }
-    }
-
     // Draw objects
     (function() {
       game.chains.draw.push(function(g, next) {
@@ -275,6 +235,32 @@ define([
         next(g);
       });
     })();
+
+    function drawRope(g, segment) {
+      if (segment.child) {
+        g.save();
+
+        // draw rope
+        const diff = new Vector(
+          segment.position.x,
+          segment.position.y
+        ).substract(segment.child.position.x, segment.child.position.y);
+        g.context.translate(
+          segment.position.x - diff.x / 2,
+          segment.position.y - diff.y / 2
+        );
+        g.context.scale(1 / game.camera.PTM, 1 / game.camera.PTM);
+        const hpi = Math.PI * 0.5;
+        g.context.rotate(diff.y === 0 ? 0 : diff.y > 0 ? hpi : -hpi);
+        g.drawCenteredImage(images["snake/rope"], 0, 0);
+
+        g.restore();
+
+        if (segment.child.child) {
+          drawRope(g, segment.child);
+        }
+      }
+    }
 
     // Draw debug objects
     // game.chains.draw.push(function(g, next) {
@@ -339,6 +325,12 @@ define([
         delete grid[`${x}x${y}`];
       }
     }
+    g.objects.lists.cell.listeners.added.push(cell => {
+      cell.addToGrid();
+    });
+    g.objects.lists.cell.listeners.removed.push(cell => {
+      cell.removeFromGrid();
+    });
 
     // Player
 
@@ -365,14 +357,21 @@ define([
       }
 
       addToGrid() {
+        if (this._grid) {
+          throw new Error("object was already part of grid");
+        }
+        this._grid = true;
         addToCell(this.position.x, this.position.y, this);
       }
 
       removeFromGrid() {
+        if (!this._grid) {
+          throw new Error("object was not part of grid");
+        }
+        this._grid = false;
         removeFromCell(this.position.x, this.position.y, this);
       }
       destroy() {
-        this.removeFromGrid();
         game.objects.remove(this);
       }
     }
@@ -456,13 +455,6 @@ define([
             o.start();
           }
         });
-      });
-
-      g.on("levelunloaded", () => {
-        g.objects.objects.each(o => {
-          g.objects.remove(o);
-        });
-        g.objects.handlePending();
       });
     })();
 
@@ -732,6 +724,11 @@ define([
       }
 
       function keydown(key) {
+        if (key === "r") {
+          game.restartLevel();
+          return;
+        }
+
         const movement = new Vector(
           (key === "right" ? 1 : 0) - (key === "left" ? 1 : 0),
           (key === "down" ? 1 : 0) - (key === "up" ? 1 : 0)
@@ -802,7 +799,7 @@ define([
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(game.level.nextLevel());
+          g.nextLevel();
           g.changeState(gameplayState());
         }
       }
@@ -844,7 +841,7 @@ define([
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(game.level.clone());
+          g.restartLevel();
           g.changeState(gameplayState());
         }
       }
