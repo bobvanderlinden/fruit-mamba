@@ -570,14 +570,12 @@ define([
           deleteItem();
         }
       });
-      g.on("mousewheel", function(delta) {
-        var d = delta > 0 ? 1 : -1;
-        item = items[(items.indexOf(item) + d + items.length) % items.length];
-      });
       g.on("keydown", function(button) {
         if (button === "p") {
           exportConsole();
         }
+        var d = (button === "]" ? 1 : 0) - (button === "[" ? 1 : 0);
+        item = items[(items.indexOf(item) + d + items.length) % items.length];
       });
 
       game.chains.draw.push(function(g, next) {

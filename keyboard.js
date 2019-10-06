@@ -7,7 +7,9 @@ define(function() {
     "39": "right",
     "37": "left",
     "13": "enter",
-    "16": "shift"
+    "16": "shift",
+    "219": "[",
+    "221": "]"
   };
   var i;
   // Alphabetic characters
