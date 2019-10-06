@@ -363,7 +363,7 @@ define([
       static tile = images["blocks/pink"];
     }
 
-    class YelllowBlock extends Block {
+    class YellowBlock extends Block {
       static tile = images["blocks/yellow"];
     }
 
@@ -516,7 +516,7 @@ define([
       static tile = images["fruit/banana"];
       static segmentTile = images["snake/banana"];
     }
-    class GoldenAppel extends Fruit {
+    class GoldenApple extends Fruit {
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
         this.destroy();
@@ -549,10 +549,10 @@ define([
         Strawberry,
         Blueberry,
         Banana,
-        GoldenAppel,
+        GoldenApple,
         Tree,
         GreenBlock,
-        YelllowBlock,
+        YellowBlock,
         PinkBlock
       ];
       let item = items[0];
