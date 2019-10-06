@@ -49,7 +49,7 @@ define([
       "game_state/dead",
       "blocks/green",
       "blocks/yellow",
-      "blocks/pink",
+      "blocks/pink"
     ],
     audio: ["test"]
   };
@@ -223,7 +223,7 @@ define([
             }
             o._grid = true;
             o.addToGrid();
-          })
+          });
         })
       );
     })();
@@ -311,9 +311,9 @@ define([
       }
 
       setPosition(x, y) {
-        this.removeFromGrid()
+        this.removeFromGrid();
         this.position.set(x, y);
-        this.addToGrid()
+        this.addToGrid();
       }
 
       drawTile(g) {
@@ -332,7 +332,7 @@ define([
         removeFromCell(this.position.x, this.position.y, this);
       }
       destroy() {
-        removeFromCell(this.position.x, this.position.y, this);
+        this.removeFromGrid();
         game.objects.remove(this);
       }
     }
@@ -357,8 +357,8 @@ define([
     }
 
     class Start {
-      constructor({x,y}) {
-        this.position = new Vector(x,y);
+      constructor({ x, y }) {
+        this.position = new Vector(x, y);
       }
 
       start() {
@@ -368,7 +368,7 @@ define([
         player = new Player({
           x: this.position.x,
           y: this.position.y,
-          tile: images['snake/head']
+          tile: images["snake/head"]
         });
         game.objects.add(player);
         this.spawned = true;
@@ -376,22 +376,22 @@ define([
     }
 
     (function() {
-      g.on('levelchanged', () => {
+      g.on("levelchanged", () => {
         game.objects.objects.each(o => {
           if (o.start) {
             o.start();
           }
-        })
-      })
+        });
+      });
 
-      g.on('levelunloaded', () => {
+      g.on("levelunloaded", () => {
         g.objects.objects.each(o => {
           g.objects.remove(o);
         });
         g.objects.handlePending();
-      })
+      });
     })();
-        
+
     class Player extends Segment {
       static updatable = true;
       static foreground = true;
@@ -433,7 +433,7 @@ define([
           }
 
           if ([...getSegments(this)].every(s => s.position.y > 0)) {
-            g.changeState(deadState())
+            g.changeState(deadState());
           }
         }
       }
@@ -664,7 +664,7 @@ define([
       return me;
     }
 
-    function deadState(){
+    function deadState() {
       const me = {
         enabled: false,
         enable: enable,
@@ -678,17 +678,17 @@ define([
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
       }
-      function draw(g,next) {
+      function draw(g, next) {
         // Draw HUD
         next(g);
-        g.drawImage(images["game_state/dead"],400,300, 1024, 512);
+        g.drawImage(images["game_state/dead"], 400, 300, 1024, 512);
       }
       function keydown(key) {
         if (key === "enter") {
           g.objects.handlePending();
-          g.changeLevel(level_sym1())
+          g.changeLevel(level_sym1());
           g.changeState(gameplayState());
-        } 
+        }
       }
       function update(dt, next) {
         // next(dt)
@@ -704,7 +704,7 @@ define([
 
     function level_sym1() {
       return {
-        name: 'Level1',
+        name: "Level1",
         objects: [
           new Start({
             x: 2,
@@ -717,13 +717,13 @@ define([
           })
         ],
         clone: arguments.callee,
-			  nextLevel: null
-      }
+        nextLevel: null
+      };
     }
 
     var player;
 
-    g.changeLevel(level_sym1())
+    g.changeLevel(level_sym1());
     g.changeState(gameplayState());
     game.objects.handlePending();
     g.start();
