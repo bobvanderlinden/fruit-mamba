@@ -682,7 +682,6 @@ define([
       };
       function enable() {
         game.camera.reset();
-        game.camera.smoothx += 300;
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
       }
