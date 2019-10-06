@@ -54,7 +54,10 @@ define([
       "game_state/victory",
       "blocks/green",
       "blocks/yellow",
-      "blocks/pink"
+      "blocks/pink",
+      "instructions/go_to_apple",
+      "instructions/press_right",
+      "instructions/press_up",
     ],
     audio: ["test"]
   };
@@ -375,6 +378,16 @@ define([
       static tile = images["blocks/green"];
     }
 
+    class AppleInstruction extends Cell {
+      static tile = images["instructions/go_to_apple"]
+    }
+    class UpInstruction extends Cell {
+      static tile = images["instructions/press_up"]
+    }
+    class RightInstruction extends Cell {
+      static tile = images["instructions/press_right"]
+    }
+
     class Segment extends Cell {
       constructor({ child }) {
         super(...arguments);
@@ -523,7 +536,6 @@ define([
     class GoldenApple extends Fruit {
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
-        this.destroy();
         g.changeState(winState());
       }
     }
@@ -819,9 +831,57 @@ define([
             x: 2,
             y: -1
           }),
+          new Tree({
+            x: 5,
+            y: -6
+          }),
           new GreenBlock({
             x: 2,
             y: 0
+          }),
+          new RightInstruction({
+            x: -2, 
+            y: -1
+          }),
+          new YellowBlock({
+            x: 5,
+            y: 0
+          }),
+          new YellowBlock({
+            x: 9,
+            y: 0
+          }),
+          new PinkBlock({
+            x: 5,
+            y: -3
+          }),
+          new PinkBlock({
+            x: 7,
+            y: -2
+          }),
+          new Orange({
+            x: 5,
+            y: -1
+          }),
+          new UpInstruction({
+            x: 13, 
+            y: -1
+          }),
+          new Blueberry({
+            x: 10,
+            y: -1
+          }),
+          new Banana({
+            x: 8,
+            y: -3
+          }),
+          new GoldenApple({
+            x: 5,
+            y: -7
+          }), 
+          new AppleInstruction({
+            x: 13, 
+            y: -7
           })
         ],
         clone: arguments.callee,
