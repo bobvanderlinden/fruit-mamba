@@ -63,7 +63,7 @@ define([
       "instructions/press_up",
       "background"
     ],
-    audio: ["test"]
+    audio: ["test", "eat01", "eat02", "eat03", "victory01", "died01"]
   };
   var g, game;
   platform.once("load", function() {
@@ -109,6 +109,14 @@ define([
     g.objects.lists.export = g.objects.createIndexList("export");
     g.objects.lists.cell = g.objects.createIndexList("cell");
     g.objects.lists.editorVisible = g.objects.createIndexList("editorVisible");
+
+    const eatSounds = [audio.eat01, audio.eat02, audio.eat03];
+    const victorySounds = [audio.victory01];
+    const diedSounds = [audio.died01];
+
+    function pickRandom(arr) {
+      return arr[(arr.length * Math.random()) | 0];
+    }
 
     // Auto-refresh
     // (function() {
@@ -602,6 +610,8 @@ define([
         player.child = segment;
         player.setPosition(this.position.x, this.position.y);
         this.destroy();
+
+        pickRandom(eatSounds).play();
       }
     }
 
@@ -629,6 +639,7 @@ define([
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
         g.changeState(winState());
+        pickRandom(victorySounds).play();
       }
     }
 
@@ -977,6 +988,7 @@ define([
       var time = 0;
       let body = document.body;
       function enable() {
+        pickRandom(diedSounds).play();
         g.chains.update.insertBefore(update, g.chains.update.objects);
         g.chains.draw.unshift(draw);
         g.on("keydown", keydown);
