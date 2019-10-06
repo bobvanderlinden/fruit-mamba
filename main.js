@@ -510,7 +510,6 @@ define([
       }
 
       drawForeground(g) {
-        console.log("drawForeground");
         g.fillStyle("red");
         g.fillCircle(this.position.x, this.position.y, 0.3);
       }
