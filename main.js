@@ -324,6 +324,10 @@ define([
       removeFromGrid() {
         removeFromCell(this.position.x, this.position.y, this);
       }
+      destroy() {
+        removeFromCell(this.position.x, this.position.y, this);
+        game.objects.remove(this);
+      }
     }
     Cell.prototype.foreground = true;
     Cell.prototype.cell = true;
@@ -492,7 +496,7 @@ define([
       function deleteItem() {
         var p = getPosition();
         const obj = getCell(p.x, p.y);
-        game.objects.remove(obj);
+        obj.forEach(o => o.destroy());
       }
       function exportConsole() {
         const items = [];
