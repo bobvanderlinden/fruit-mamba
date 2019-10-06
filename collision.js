@@ -2,7 +2,7 @@ import Vector from "./vector.js";
 export default function(game) {
   game.objects.lists.collide = game.objects.createIndexList("collide");
   game.objects.lists.collidable = game.objects.createIndexList("collidable");
-  game.on("postupdate", function() {
+  game.on("postupdate", () => {
     game.emit("precollision");
     handleCollision();
     game.emit("postcollision");
@@ -13,11 +13,11 @@ export default function(game) {
     var t2 = new Vector(0, 0);
 
     var collisionlines = [];
-    game.objects.lists.collidable.each(function(o) {
+    game.objects.lists.collidable.each(o => {
       collisionlines = collisionlines.concat(o.collisionlines);
     });
 
-    game.objects.lists.collide.each(function(o) {
+    game.objects.lists.collide.each(o => {
       if (!o.velocity) {
         return;
       }
@@ -77,7 +77,7 @@ export default function(game) {
         }
         handleCollisionLineSegments(collisionlines);
         if (collisions.length > 0) {
-          collisions.sort(function(a, b) {
+          collisions.sort((a, b) => {
             return b.offset - a.offset;
           });
           var c = collisions[0];

@@ -25,7 +25,7 @@ p.remove = function(o) {
 p.clear = function(o) {
   var me = this;
   me.handlePending();
-  me.objects.each(function(o) {
+  me.objects.each(o => {
     console.log(o);
     me.remove(o);
   });
@@ -36,7 +36,7 @@ p.handlePending = function() {
   if (me.pendingAdd.root) {
     // console.log('handlePending',me.pendingAdd.root);
   }
-  me.pendingAdd.each(function(o, _, DELETE) {
+  me.pendingAdd.each((o, _, DELETE) => {
     console.assert(!o._objectmanager);
     o._objectmanager = me;
     me.objects.push(o);
@@ -53,7 +53,7 @@ p.handlePending = function() {
     }
     return DELETE;
   });
-  me.pendingRemove.each(function(o, _, DELETE) {
+  me.pendingRemove.each((o, _, DELETE) => {
     delete o.__pendingRemove;
     console.assert(o._objectmanager === me);
     o._objectmanager = null;

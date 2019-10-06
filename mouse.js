@@ -13,7 +13,7 @@ export default function(g) {
   }
   g.canvas.addEventListener(
     "mouseup",
-    function(event) {
+    event => {
       if (g.mouse.buttons[event.button]) {
         g.mouse.x = getX(event);
         g.mouse.y = getY(event);
@@ -27,7 +27,7 @@ export default function(g) {
   );
   g.canvas.addEventListener(
     "mousedown",
-    function(event) {
+    event => {
       if (!g.mouse.buttons[event.button]) {
         g.mouse.x = getX(event);
         g.mouse.y = getY(event);
@@ -40,7 +40,7 @@ export default function(g) {
   );
   g.canvas.addEventListener(
     "mousemove",
-    function(event) {
+    event => {
       g.mouse.x = getX(event);
       g.mouse.y = getY(event);
       g.emit("mousemove", g.mouse.x, g.mouse.y);
@@ -49,7 +49,7 @@ export default function(g) {
   );
   g.canvas.addEventListener(
     "mousewheel",
-    function(event) {
+    event => {
       g.mouse.x = getX(event);
       g.mouse.y = getY(event);
       g.emit("mousewheel", event.deltaY, g.mouse.x, g.mouse.y);
@@ -58,7 +58,7 @@ export default function(g) {
   );
   g.canvas.addEventListener(
     "DOMMouseScroll",
-    function(event) {
+    event => {
       g.mouse.x = getX(event);
       g.mouse.y = getY(event);
       g.emit("mousewheel", -event.detail);

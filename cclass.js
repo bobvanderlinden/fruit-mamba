@@ -33,7 +33,7 @@ export default function(/* prototype?, mixins..., methods */) {
 
   methods.prototype = prototype;
 
-  mixins.forEach(function(mixin) {
+  mixins.forEach(mixin => {
     mix(methods, mixin);
   });
 

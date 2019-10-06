@@ -4,7 +4,7 @@ function pointsToSegments(points) {
   // Create segments from points.
   var lineSegments = [];
   var prevPoint = points[points.length - 1];
-  points.forEach(function(point) {
+  points.forEach(point => {
     lineSegments.push(
       new LineSegment(prevPoint.x, prevPoint.y, point.x, point.y)
     );
@@ -20,7 +20,7 @@ function StaticCollidable(points, inverted) {
   this.color = "white";
   function max(a, f) {
     var r = null;
-    a.forEach(function(e) {
+    a.forEach(e => {
       if (!r || f(e, a)) {
         r = e;
       }
@@ -28,16 +28,16 @@ function StaticCollidable(points, inverted) {
     return r;
   }
   this.bounds = {
-    left: max(points, function(a, b) {
+    left: max(points, (a, b) => {
       return a.x < b.x;
     }).x,
-    right: max(points, function(a, b) {
+    right: max(points, (a, b) => {
       return a.x > b.x;
     }).x,
-    top: max(points, function(a, b) {
+    top: max(points, (a, b) => {
       return a.y < b.y;
     }).y,
-    bottom: max(points, function(a, b) {
+    bottom: max(points, (a, b) => {
       return a.y > b.y;
     }).y
   };
@@ -52,7 +52,7 @@ StaticCollidable.prototype.draw = function(g) {
     this.collisionlines[0].start.x,
     this.collisionlines[0].start.y
   );
-  this.collisionlines.forEach(function(line) {
+  this.collisionlines.forEach(line => {
     g.context.lineTo(line.end.x, line.end.y);
   });
   g.context.closePath();

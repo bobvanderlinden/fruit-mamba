@@ -48,7 +48,7 @@ export default {
     var callbackArguments = Array.prototype.slice.call(arguments, 1);
     var l = this._getEvents()[name];
     if (l) {
-      l.forEach(function(f) {
+      l.forEach(f => {
         f.apply(me, callbackArguments);
       });
     }

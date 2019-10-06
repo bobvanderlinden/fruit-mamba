@@ -2,7 +2,7 @@ export default function(g) {
   g.level = null;
   g.changeLevel = function(level) {
     if (this.level) {
-      this.objects.objects.each(function(c) {
+      this.objects.objects.each(c => {
         g.objects.remove(c);
       });
       if (this.level.disable) {
@@ -13,7 +13,7 @@ export default function(g) {
     g.emit("levelunloaded");
     this.level = level;
     if (this.level) {
-      this.level.objects.forEach(function(c) {
+      this.level.objects.forEach(c => {
         g.objects.add(c);
       });
       if (this.level.enable) {

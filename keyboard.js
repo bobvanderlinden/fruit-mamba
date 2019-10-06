@@ -23,7 +23,7 @@ export default function(g) {
   g.keys = {};
   g.canvas.addEventListener(
     "keyup",
-    function(event) {
+    event => {
       var keyName = keyNames[event.keyCode];
       if (keyName) {
         if (g.keys[keyName]) {
@@ -37,7 +37,7 @@ export default function(g) {
   );
   g.canvas.addEventListener(
     "keydown",
-    function(event) {
+    event => {
       var keyName = keyNames[event.keyCode];
       if (keyName) {
         if (!g.keys[keyName]) {

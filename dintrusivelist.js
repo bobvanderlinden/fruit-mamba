@@ -31,7 +31,7 @@ p.push = function(o) {
       throw "koek";
     }
   });
-  this.listeners["added"].forEach(function(f) {
+  this.listeners["added"].forEach(f => {
     f(o);
   });
 };
@@ -55,7 +55,7 @@ p.remove = function(o) {
   }
   delete o[this._nextProp];
   delete o[this._prevProp];
-  this.listeners["removed"].forEach(function(f) {
+  this.listeners["removed"].forEach(f => {
     f(o);
   });
 };
@@ -112,7 +112,7 @@ p.insertBefore = function(after, o) {
   } else {
     me.root = o;
   }
-  this.listeners["added"].forEach(function(f) {
+  this.listeners["added"].forEach(f => {
     f(o);
   });
 };

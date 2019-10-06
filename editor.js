@@ -31,7 +31,7 @@ export default function(game) {
     "1": {
       mousedown: function(button, x, y) {
         var me = this;
-        game.objects.lists.collidable.each(function(cls) {
+        game.objects.lists.collidable.each(cls => {
           for (var i = 0; i < cls.collisionlines.length; i++) {
             if (cls.collisionlines[i].end.distanceTo(x, y) < 10) {
               me.grabbed = cls.collisionlines[i];
@@ -54,8 +54,8 @@ export default function(game) {
         me.grabbed = null;
       },
       draw: function(g) {
-        game.objects.lists.collidable.each(function(cls) {
-          cls.collisionlines.forEach(function(cl) {
+        game.objects.lists.collidable.each(cls => {
+          cls.collisionlines.forEach(cl => {
             g.fillCircle(cl.start.x, cl.start.y, 10);
           });
         });
@@ -79,7 +79,7 @@ export default function(game) {
   //pass('predraw');
   //pass('postdraw');
 
-  g.chains.draw.push(function(g, next) {
+  g.chains.draw.push((g, next) => {
     g.fillCenteredText("EDITOR", 400, 300);
     if (tool.draw) {
       tool.draw(g);
@@ -87,7 +87,7 @@ export default function(game) {
     next(g);
   });
 
-  g.on("keydown", function(button) {
+  g.on("keydown", button => {
     if (tools[button]) {
       tool = tools[button];
     }

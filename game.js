@@ -33,7 +33,7 @@ function Game(start, canvas, components) {
 
   this.chains.draw.push(
     (this.chains.draw.objects = function(g, next) {
-      me.objects.lists.draw.each(function(o) {
+      me.objects.lists.draw.each(o => {
         o.draw(g);
       });
       next(g);
@@ -42,7 +42,7 @@ function Game(start, canvas, components) {
 
   this.chains.update.push(
     (this.chains.update.objects = function updateObjects(dt, next) {
-      me.objects.lists.update.each(function(o) {
+      me.objects.lists.update.each(o => {
         o.update(dt);
       });
       me.objects.handlePending();
@@ -55,7 +55,7 @@ function Game(start, canvas, components) {
   this.time = 0;
 
   var componentsLoaded = 0;
-  components.forEach(function(c) {
+  components.forEach(c => {
     var result = c(me, componentLoaded);
     if (result !== componentLoaded) {
       componentLoaded();
@@ -115,13 +115,13 @@ p.start = function() {
     lastUpdate = now;
     dt = 1 / 60; //Math.min(1/30,dt);
 
-    chain(me.chains.update, function(dt) {})(dt);
+    chain(me.chains.update, dt => {})(dt);
 
     me.time += dt;
 
     me.graphics.clear();
 
-    chain(me.chains.draw, function(g) {})(me.graphics);
+    chain(me.chains.draw, g => {})(me.graphics);
 
     if (me.running === runningToken) {
       requestAnimationFrame(update);

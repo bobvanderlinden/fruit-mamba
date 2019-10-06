@@ -48,7 +48,7 @@ p.each = function(f) {
 };
 p.contains = function(findElement) {
   var result = false;
-  this.each(function(element, BREAK) {
+  this.each((element, BREAK) => {
     if (element === findElement) {
       result = true;
       return BREAK;

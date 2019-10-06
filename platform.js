@@ -63,7 +63,7 @@ Array.prototype.min = function() {
 };
 
 Array.prototype.maxF = function(compare) {
-  return this.reduce(function(prev, current) {
+  return this.reduce((prev, current) => {
     if (prev === undefined || compare(prev, current) < 0) {
       return current;
     }
@@ -72,7 +72,7 @@ Array.prototype.maxF = function(compare) {
 };
 
 Array.prototype.minF = function(compare) {
-  return this.reduce(function(prev, current) {
+  return this.reduce((prev, current) => {
     if (prev === undefined || compare(prev, current) > 0) {
       return current;
     }
@@ -85,7 +85,7 @@ Array.prototype.contains = function(elem) {
 };
 
 Array.prototype.compact = function() {
-  return this.filter(function(elem) {
+  return this.filter(elem => {
     return elem != null;
   });
 };
@@ -165,7 +165,7 @@ eventemitter._inherit(platform);
   }
   /* Safari, iCab, Konqueror */
   if (/KHTML|WebKit|iCab/i.test(navigator.userAgent)) {
-    var DOMLoadTimer = setInterval(function() {
+    var DOMLoadTimer = setInterval(() => {
       if (/loaded|complete/i.test(document.readyState)) {
         callback();
         clearInterval(DOMLoadTimer);

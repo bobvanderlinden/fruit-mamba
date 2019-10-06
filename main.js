@@ -66,7 +66,7 @@ var rs = {
   audio: ["test", "eat01", "eat02", "eat03", "victory01", "died01"]
 };
 var g, game;
-platform.once("load", function() {
+platform.once("load", () => {
   var canvas = document.getElementById("main");
   game = g = new Game(startGame, canvas, [
     mouse,
@@ -77,7 +77,7 @@ platform.once("load", function() {
     collision,
     quake
   ]);
-  g.resources.status.on("changed", function() {
+  g.resources.status.on("changed", () => {
     g.graphics.context.clearRect(0, 0, game.width, game.height);
     g.graphics.context.fillStyle = "black";
     g.graphics.context.font = "arial";
@@ -239,7 +239,7 @@ function startGame(err) {
   })(); // Draw objects
 
   (function() {
-    game.chains.draw.push(function(g, next) {
+    game.chains.draw.push((g, next) => {
       game.objects.lists.background.each(o => {
         o.drawBackground(g);
       });

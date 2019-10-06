@@ -80,7 +80,7 @@ export default function(rs) {
 
   var isPreloaded = false;
   var onpreloaded = null;
-  preload(resources, rs, function(err) {
+  preload(resources, rs, err => {
     if (err) {
       console.error(err);
     }
@@ -107,7 +107,7 @@ function preload(resources, preloadResources, callback) {
     if (!preloadResources[type]) {
       return;
     }
-    preloadResources[type].forEach(function(name) {
+    preloadResources[type].forEach(name => {
       status.total++;
       loadfunction.call(resources, name, onResourceLoaded);
     });
