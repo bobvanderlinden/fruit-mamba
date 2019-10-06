@@ -893,7 +893,15 @@ define([
           })
         ],
         clone: arguments.callee,
-        nextLevel: null
+        nextLevel: level_last
+      };
+    }
+
+    function level_last() {
+      return {
+        name: "last",
+        objects: [new Start({ x: 0, y: -1 }), new GreenBlock({ x: 0, y: 0 })],
+        clone: arguments.callee
       };
     }
 
