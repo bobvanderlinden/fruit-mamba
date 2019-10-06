@@ -353,9 +353,9 @@ define([
         addToCell(this.position.x + -1, this.position.y, this);
       }
       removeFromGrid() {
-        removesFromCell(this.position.x + 1, this.position.y, this);
-        removesFromCell(this.position.x, this.position.y, this);
-        removesFromCell(this.position.x + -1, this.position.y, this);
+        removeFromCell(this.position.x + 1, this.position.y, this);
+        removeFromCell(this.position.x, this.position.y, this);
+        removeFromCell(this.position.x + -1, this.position.y, this);
       }
     }
 
