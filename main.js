@@ -350,6 +350,7 @@ define([
     class StaticCell extends Cell {}
 
     class Block extends StaticCell {
+      static export = true;
       addToGrid() {
         addToCell(this.position.x + 1, this.position.y, this);
         addToCell(this.position.x, this.position.y, this);
