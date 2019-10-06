@@ -520,7 +520,7 @@ define([
       static tile = images["fruit/golden_apple"];
       eatenBy(player) {
         this.destroy();
-        g.changeState(winState())
+        g.changeState(winState());
       }
     }
 
