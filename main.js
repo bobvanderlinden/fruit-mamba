@@ -485,6 +485,16 @@ define([
           hasCell(segment.position.x, segment.position.y + 1, StaticCell)
         );
       }
+      canMove() {
+        const { x, y } = this.position;
+        // test if player still has a place to go, otherwise die
+        return !(
+          (hasCell(x + 1, y, Segment) || hasCell(x + 1, y, StaticCell)) &&
+          (hasCell(x, y + 1, Segment) || hasCell(x, y + 1, StaticCell)) &&
+          (hasCell(x - 1, y, Segment) || hasCell(x - 1, y, StaticCell)) &&
+          (hasCell(x, y - 1, Segment) || hasCell(x, y - 1, StaticCell))
+        );
+      }
       update(dt) {
         this._dt += dt;
 
@@ -766,6 +776,11 @@ define([
 
         player.moveTo(x, y);
         player.velocity.setV(movement);
+
+        // test if player still has a place to go, otherwise die
+        if (!player.canMove()) {
+          g.changeState(deadState());
+        }
       }
 
       function mousedown() {}
