@@ -505,11 +505,15 @@ define([
           (hasCell(x, y - 1, Segment) || hasCell(x, y - 1, StaticCell))
         );
       }
+      moveTo(x, y) {
+        super.moveTo(x, y);
+        this._dt = 0;
+      }
       update(dt) {
         this._dt += dt;
 
-        if (this._dt > 0.5) {
-          this._dt = 0;
+        while (this._dt > 0.1) {
+          this._dt -= 0.1;
 
           // Do not allow moving when not touching ground
           if (!this.isOnGround()) {
@@ -520,6 +524,7 @@ define([
 
           if ([...getSegments(this)].every(s => s.position.y > 0)) {
             g.changeState(deadState());
+            return;
           }
         }
       }
